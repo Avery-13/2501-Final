@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include <path_config.h>
-// was maybe here
+
 #include "sprite.h"
 #include "tile.h"
 #include "shader.h"
