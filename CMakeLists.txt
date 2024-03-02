@@ -19,7 +19,6 @@ set(HDRS
     explosion_game_object.h
     tile.h
     bullet_game_object.h
-    particle.h
 )
  
 set(SRCS
@@ -38,7 +37,6 @@ set(SRCS
     explosion_game_object.cpp
     tile.cpp
     bullet_game_object.cpp
-    particle.cpp
 )
 
 # Add path name to configuration file
