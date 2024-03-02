@@ -12,7 +12,6 @@
 #include "timer.h"
 #include "geometry.h"
 #include "tile.h"
-#include "particle.h"
 
 namespace game {
 
