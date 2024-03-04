@@ -140,10 +140,9 @@ void Game::Setup(void)
     game_objects_[8]->SetCollidable(false);
 
     // Setup background
-    // In this specific implementation, the background is always the
-    // last object
+    // In this specific implementation, the background is always the last object
     GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[3]);
-    background->SetScale(glm::vec2(60.0f, 60.0f));
+    background->SetScale(glm::vec2(90.0f, 90.0f));
     background_objects_.push_back(background);
 
     // Nullify explosion
@@ -191,7 +190,7 @@ void Game::SetAllTextures(void)
     // Load all textures that we will need
     // Declare all the textures here
     const char *texture[] = 
-        {"/textures/player.png", "/textures/enemy_grey.png", "/textures/enemy_orange.png", "/textures/grass13.png", "/textures/orb.png", "/textures/explosion0.png", 
+        {"/textures/player.png", "/textures/enemy_grey.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png", 
         "/textures/coin.png", "/textures/axe.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
