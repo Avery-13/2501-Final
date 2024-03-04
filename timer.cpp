@@ -22,7 +22,7 @@ void Timer::Start(float end_time)
     float current_time = glfwGetTime();
     if (end_time_ == -1.0f) {
         end_time_ = current_time + end_time;
-        std::cout<<"Timer started with end time: "<<end_time_<<" | Current time is: "<<current_time<<std::endl;
+        // std::cout<<"Timer started with end time: "<<end_time_<<" | Current time is: "<<current_time<<std::endl;
 	}
 }
 

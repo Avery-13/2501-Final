@@ -30,6 +30,10 @@ namespace game {
 
             glm::vec3 velocity_;
 
+            Timer animationTimer_;
+            int currentFrame_ = 0;
+            float animationSpeed_;
+
     }; // class PlayerGameObject
 
 } // namespace game

@@ -53,6 +53,7 @@ namespace game {
             void SetOrbit(float radius, float speed, glm::vec2 centre);
             void SetCollidable(bool isCollidable) { isCollidable_ = isCollidable; }
             void SetGhost(bool isGhost) { render_ghost_ = isGhost; }
+            void SetTexture(GLuint texture) { texture_ = texture; }
 
 
         protected:

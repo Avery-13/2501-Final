@@ -1,5 +1,6 @@
 #include "player_game_object.h"
 #include <iostream>
+#include <cmath>
 
 #include "timer.h"
 
@@ -17,6 +18,8 @@ PlayerGameObject::PlayerGameObject(const glm::vec3 &position, Geometry *geom, Sh
 	objectsCollected_ = 0;
 	isInvincible_ = false;
 	velocity_ = glm::vec3(0, 0, 0);
+	animationSpeed_ = 0.0f;
+	animationTimer_.Start(animationSpeed_);
 }
 
 // Update function for moving the player object around
@@ -24,6 +27,13 @@ void PlayerGameObject::Update(double delta_time) {
 	//Normalize the velocity
 	float norm = velocity_.length();
 	velocity_ /= norm;
+
+	// Calculate current velocity length
+	float v_len = glm::sqrt(pow(velocity_.x, 2) + pow(velocity_.y, 2));
+
+	// Update animation speed
+	animationSpeed_ = 4.0f * v_len * (1/curr_speed_);
+	//std::cout << "Animation speed: " << animationSpeed_ << std::endl;
 
 	//Movement
 	SetPosition(GetPosition() + float(delta_time) * velocity_ * curr_speed_);
@@ -43,7 +53,7 @@ void PlayerGameObject::Update(double delta_time) {
 
 		invincibilityTimer_.Start(10.0f);
 	}
-
+	
 	// Call the parent's update method to move the object in standard way, if desired
 	GameObject::Update(delta_time);
 }

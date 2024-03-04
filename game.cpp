@@ -29,7 +29,6 @@ const glm::vec3 viewport_background_color_g(0.0, 0.0, 0.0);
 
 //Other global
 float pi_over_two = glm::pi<float>() / 2.0f;
-
 // Directory with game resources such as textures
 const std::string resources_directory_g = RESOURCES_DIRECTORY;
 
@@ -116,32 +115,32 @@ void Game::Setup(void)
     player_ = game_objects_[0];
 
     // Setup enemy objects
-    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[2]));
+    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[3]));
     game_objects_[1]->SetRotation(pi_over_two);
 
     // Setup collectible objects
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(2.0f, 2.0f, 0.0f), sprite_, &sprite_shader_, tex_[6]));
+    game_objects_.push_back(new CollectibleGameObject(glm::vec3(2.0f, 2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     game_objects_[2]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[6]));
+    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     game_objects_[3]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, 3.0f, 0.0f), sprite_, &sprite_shader_, tex_[6]));
+    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, 3.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     game_objects_[4]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(4.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[6]));
+    game_objects_.push_back(new CollectibleGameObject(glm::vec3(4.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     game_objects_[5]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-1.0f, -3.0f, 0.0f), sprite_, &sprite_shader_, tex_[6]));
+    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-1.0f, -3.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     game_objects_[6]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(3.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[6]));
+    game_objects_.push_back(new CollectibleGameObject(glm::vec3(3.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     game_objects_[7]->SetScale(glm::vec2(0.5f, 0.5f));
 
     // Setup orbiting axe object
-    game_objects_.push_back(new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+    game_objects_.push_back(new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[8]));
     game_objects_[8]->SetOrbit(1.0f, 3.0f, glm::vec2(2.0f, 2.0f));
     game_objects_[8]->SetScale(glm::vec2(0.5f, 0.5f));
     game_objects_[8]->SetCollidable(false);
 
     // Setup background
     // In this specific implementation, the background is always the last object
-    GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[3]);
+    GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[4]);
     background->SetScale(glm::vec2(90.0f, 90.0f));
     background_objects_.push_back(background);
 
@@ -190,7 +189,7 @@ void Game::SetAllTextures(void)
     // Load all textures that we will need
     // Declare all the textures here
     const char *texture[] = 
-        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png", 
+        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
         "/textures/coin.png", "/textures/axe.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
@@ -288,6 +287,32 @@ void Game::HandleControls(double delta_time)
 
 void Game::Update(double delta_time)
 {
+    // Get player game object
+    PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(game_objects_[0]);
+
+
+    // Animate player
+    if (player->animationTimer_.Finished()) {
+        player->animationTimer_.Start(player->animationSpeed_);
+
+        // Check if player is moving
+        if (player->animationSpeed_ != 0.0f) {
+            // Change player texture
+            if (player->currentFrame_ == 0) {
+                game_objects_[0]->SetTexture(tex_[1]);
+                player->currentFrame_ = 1;
+            }
+            else {
+                game_objects_[0]->SetTexture(tex_[0]);
+                player->currentFrame_ = 0;
+            }
+        }
+        else {
+			// Set player texture to still
+			game_objects_[0]->SetTexture(tex_[2]);
+        }
+	}
+
     // Update time
     current_time_ += delta_time;
     if (!timer_.Running()) {
@@ -301,7 +326,7 @@ void Game::Update(double delta_time)
 
         // Spawn new enemy
         std::cout << "New enemy at: " << rand_x << " " << rand_y << std::endl;
-		game_objects_.push_back(new EnemyGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[2]));
+		game_objects_.push_back(new EnemyGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[3]));
         game_objects_.back()->SetRotation(pi_over_two);
 
         // Generate random coordinates to spawn a new collectible
@@ -310,7 +335,7 @@ void Game::Update(double delta_time)
 
         // Spawn new collectible
         std::cout << "New collectible at: " << rand_x << " " << rand_y << std::endl;
-        game_objects_.push_back(new CollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[6]));
+        game_objects_.push_back(new CollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[7]));
         game_objects_.back()->SetScale(glm::vec2(0.5f, 0.5f));
 	}
 
@@ -397,7 +422,7 @@ void Game::Update(double delta_time)
 
                     if (player->hp_ <= 0) {
                         //Add explosion
-                        explosions_.push_back(new ExplosionGameObject(player->GetPosition(), sprite_, &sprite_shader_, tex_[5]));
+                        explosions_.push_back(new ExplosionGameObject(player->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
                         std::cout << "Player has died!" << std::endl;
                         glfwSetWindowShouldClose(window_, true);
                         continue;
@@ -407,7 +432,7 @@ void Game::Update(double delta_time)
                 // This is where you would perform collision response between objects
                 if (other_enemy) {
                     std::cout<< "Explosion Started" << std::endl;
-                    explosions_.push_back(new ExplosionGameObject(other_game_object->GetPosition(), sprite_, &sprite_shader_, tex_[5]));
+                    explosions_.push_back(new ExplosionGameObject(other_game_object->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
                     game_objects_.erase(game_objects_.begin() + j);
 				}
 
