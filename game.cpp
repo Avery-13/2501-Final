@@ -116,7 +116,7 @@ void Game::Setup(void)
     player_ = game_objects_[0];
 
     // Setup enemy objects
-    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[1]));
+    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[2]));
     game_objects_[1]->SetRotation(pi_over_two);
 
     // Setup collectible objects
@@ -190,7 +190,7 @@ void Game::SetAllTextures(void)
     // Load all textures that we will need
     // Declare all the textures here
     const char *texture[] = 
-        {"/textures/player.png", "/textures/enemy_grey.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png", 
+        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png", 
         "/textures/coin.png", "/textures/axe.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
@@ -301,7 +301,7 @@ void Game::Update(double delta_time)
 
         // Spawn new enemy
         std::cout << "New enemy at: " << rand_x << " " << rand_y << std::endl;
-		game_objects_.push_back(new EnemyGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[1]));
+		game_objects_.push_back(new EnemyGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[2]));
         game_objects_.back()->SetRotation(pi_over_two);
 
         // Generate random coordinates to spawn a new collectible
@@ -440,7 +440,7 @@ void Game::Render(void){
 
 
     // Set view to zoom out centered by default at 0,0
-    float camera_zoom = 0.25f;
+    float camera_zoom = 0.35f;
     glm::mat4 camera_zoom_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(camera_zoom, camera_zoom, camera_zoom));
     glm::mat4 view_matrix = window_scale_matrix * camera_zoom_matrix;
 
