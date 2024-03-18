@@ -23,6 +23,8 @@ namespace game {
         glm::mat4 projectionMatrix_;
         std::vector<GameObject*> hudElements; // Stores HUD elements
         std::vector<GameObject*> scoreDigits_;
+        std::vector<GameObject*> hearts;
+
 
         int score_;
         int health_;
@@ -32,6 +34,8 @@ namespace game {
 
         GLuint numberTextures[10]; // Textures for numbers 0-9
         GLuint scoreLabelTexture;  // Texture for the "score" label
+        GLuint heartTexture;
+        GLuint emptyHeartTexture;
 
         void LoadTexture(GLuint& texture, const char* filepath);
 
