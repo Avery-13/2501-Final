@@ -94,6 +94,8 @@ Game::~Game()
         delete game_objects_[i];
     }
 
+    delete hud_;
+
     // Close window
     glfwDestroyWindow(window_);
     glfwTerminate();
@@ -110,9 +112,10 @@ void Game::Setup(void)
 
     // Setup the player object (position, texture, vertex count)
     // Note that, in this specific implementation, the player object should always be the first object in the game object vector 
-    game_objects_.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[0]));
+    player_ = new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[0]);
+    game_objects_.push_back(player_);
     game_objects_[0]->SetRotation(pi_over_two);
-    player_ = game_objects_[0];
+
 
     // Setup enemy objects
     game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[3]));
@@ -143,6 +146,10 @@ void Game::Setup(void)
     GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[4]);
     background->SetScale(glm::vec2(90.0f, 90.0f));
     background_objects_.push_back(background);
+
+    // Initialize the HUD
+    hud_ = new HUD(resources_directory_g + "/textures/hud/", &sprite_shader_, glm::ortho(0.0f, static_cast<float>(window_width_g), static_cast<float>(window_height_g), 0.0f));
+
 
     // Nullify explosion
     explosion_ = NULL;
@@ -224,6 +231,10 @@ void Game::MainLoop(void)
 
         // Update all the game objects
         Update(delta_time);
+
+        // Update the HUD with new information (you might get these values from somewhere else)
+        hud_->Update(player_->objectsCollected_, player_->hp_, collected_objects_);
+
 
         // Render all the game objects
         Render();
@@ -468,9 +479,11 @@ void Game::Render(void){
     float camera_zoom = 0.35f;
     glm::mat4 camera_zoom_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(camera_zoom, camera_zoom, camera_zoom));
     glm::mat4 view_matrix = window_scale_matrix * camera_zoom_matrix;
+    glm::mat4 hudProjection = glm::ortho(0.0f, static_cast<float>(window_width_g), static_cast<float>(window_height_g), 0.0f);
 
     view_matrix = glm::translate(view_matrix, glm::vec3(-1 * player_->GetPosition().x, -1 * player_->GetPosition().y, 0.0f));
-
+    // Render the HUD
+    hud_->Render(hudProjection, current_time_);
     // Render all game objects
     for (int i = 0; i < explosions_.size(); i++) {
 		explosions_[i]->Render(view_matrix, current_time_);
@@ -483,6 +496,8 @@ void Game::Render(void){
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);
 	}
+
+
 }
       
 } // namespace game

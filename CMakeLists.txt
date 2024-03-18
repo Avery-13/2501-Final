@@ -19,9 +19,11 @@ set(HDRS
     explosion_game_object.h
     tile.h
     bullet_game_object.h
+    hud.h
 )
  
 set(SRCS
+    CMakeLists.txt
     file_utils.cpp
     game.cpp
     game_object.cpp
@@ -37,6 +39,7 @@ set(SRCS
     explosion_game_object.cpp
     tile.cpp
     bullet_game_object.cpp
+    hud.cpp
 )
 
 # Add path name to configuration file

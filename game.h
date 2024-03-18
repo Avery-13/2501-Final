@@ -12,6 +12,8 @@
 #include "timer.h"
 #include "geometry.h"
 #include "tile.h"
+#include "hud.h"
+#include "player_game_object.h"
 
 namespace game {
 
@@ -39,6 +41,9 @@ namespace game {
             // Main window: pointer to the GLFW window structure
             GLFWwindow *window_;
 
+            //hud
+            HUD* hud_;
+
             // Sprite geometry
             Geometry *sprite_;
 
@@ -59,7 +64,7 @@ namespace game {
             GLuint *tex_;
 
             // Player object
-            GameObject *player_;
+            PlayerGameObject *player_;
 
             // List of game objects
             std::vector<GameObject*> game_objects_;
