@@ -76,6 +76,7 @@ void Game::Init(void)
     tile_ = new Tile();
     sprite_->CreateGeometry();
     tile_->CreateGeometry();
+    score = 0;
 
     // Initialize sprite shader
     sprite_shader_.Init((resources_directory_g+std::string("/sprite_vertex_shader.glsl")).c_str(), (resources_directory_g+std::string("/sprite_fragment_shader.glsl")).c_str());
@@ -232,8 +233,8 @@ void Game::MainLoop(void)
         // Update all the game objects
         Update(delta_time);
 
-        // Update the HUD with new information (you might get these values from somewhere else)
-        hud_->Update(player_->objectsCollected_, player_->hp_, collected_objects_);
+        // Update the HUD with new information
+        hud_->Update(score, player_->hp_, collected_objects_);
 
 
         // Render all the game objects
@@ -406,6 +407,7 @@ void Game::Update(double delta_time)
                     PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(game_objects_[i]);
                     if (player) {
 						player->objectsCollected_ += 1;
+                        score += 20;
 						std::cout << "Player has: " << player->objectsCollected_ << " collected objects!" << std::endl;
 					}
                     break;
@@ -442,6 +444,7 @@ void Game::Update(double delta_time)
 
                 // This is where you would perform collision response between objects
                 if (other_enemy) {
+                    score += 100;
                     std::cout<< "Explosion Started" << std::endl;
                     explosions_.push_back(new ExplosionGameObject(other_game_object->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
                     game_objects_.erase(game_objects_.begin() + j);

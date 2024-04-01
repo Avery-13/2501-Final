@@ -87,6 +87,9 @@ namespace game {
             // Current collided object (int index in vector)
             int curr_collided_object_;
 
+            //total score
+            int score;
+
             // Current amount of collected objects
             int collected_objects_;
 
