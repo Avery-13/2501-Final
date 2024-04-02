@@ -24,6 +24,7 @@ namespace game {
         std::vector<GameObject*> hudElements; // Stores HUD elements
         std::vector<GameObject*> scoreDigits_;
         std::vector<GameObject*> hearts;
+        std::vector<GameObject*> coins;
 
 
         int score_;
@@ -36,6 +37,9 @@ namespace game {
         GLuint scoreLabelTexture;  // Texture for the "score" label
         GLuint heartTexture;
         GLuint emptyHeartTexture;
+        GLuint coinTexture;
+        GLuint emptyCoinTexture;
+
 
         void LoadTexture(GLuint& texture, const char* filepath);
 

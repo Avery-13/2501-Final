@@ -24,6 +24,8 @@ namespace game {
         LoadTexture(scoreLabelTexture, (hudTexturePath + "score.png").c_str());
         LoadTexture(heartTexture, (hudTexturePath + "heart.png").c_str());
         LoadTexture(emptyHeartTexture, (hudTexturePath + "emptyHeart.png").c_str());
+        LoadTexture(coinTexture, (hudTexturePath + "coin.png").c_str());
+        LoadTexture(emptyCoinTexture, (hudTexturePath + "coinOutline.png").c_str());
 
         // Position HUD elements at the top-left corner of the screen
         glm::vec3 scorePosition(-0.7f, 0.8f, 0.0f); 
@@ -41,13 +43,22 @@ namespace game {
             digitPosition.x += 0.2f; // Move position for the next digit
         }
 
-        glm::vec3 heartPosition(-0.8f, -0.8f, 0.0f); // Position on the HUD for the first digit
-        for (int i = 0; i < 3; ++i) { // Assuming a 4 digit score
-            // Initialize each digit GameObject with the texture for '0'
+        glm::vec3 heartPosition(-0.8f, -0.8f, 0.0f); // Position on the HUD for the first heart
+        for (int i = 0; i < 3; ++i) { 
+            
             GameObject* heartGO = new GameObject(heartPosition, sprite_, shader_, heartTexture);
             heartGO->SetScale(glm::vec2(0.3, 0.3)); // Set an appropriate scale for your HUD
             hearts.push_back(heartGO);
-            heartPosition.x += 0.2f; // Move position for the next digit
+            heartPosition.x += 0.2f; // Move position for the next heart
+        }
+
+        glm::vec3 coinPosition(0.3f, -0.8f, 0.0f); // Position on the HUD for the first coin
+        for (int i = 0; i < 3; ++i) { 
+            
+            GameObject* coinGO = new GameObject(coinPosition, sprite_, shader_, emptyCoinTexture);
+            coinGO->SetScale(glm::vec2(0.2, 0.2)); // Set an appropriate scale for your HUD
+            coins.push_back(coinGO);
+            coinPosition.x += 0.25f; // Move position for the next coin
         }
 
     }
@@ -60,6 +71,9 @@ namespace game {
             delete element;
         }
         for (auto element : hearts) {
+            delete element;
+        }
+        for (auto element : coins) {
             delete element;
         }
         delete sprite_;
@@ -106,6 +120,9 @@ namespace game {
         for (auto element : hearts) {
             element->Render(identityMatrix, currentTime);
         }
+        for (auto element : coins) {
+            element->Render(identityMatrix, currentTime);
+        }
     }
 
     void HUD::Update(int score, int health, int collectibles) {
@@ -125,6 +142,15 @@ namespace game {
             else {
                 // Player has lost this heart
                 hearts[i]->SetTexture(emptyHeartTexture);
+            }
+        }
+
+        for (int i = 0; i < 3; ++i) {
+            if (i < collectibles) {
+                coins[i]->SetTexture(coinTexture);
+            }
+            else {
+                coins[i]->SetTexture(emptyCoinTexture);
             }
         }
 
