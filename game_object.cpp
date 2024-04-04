@@ -15,7 +15,7 @@ GameObject::GameObject(const glm::vec3& position, Geometry* geom, Shader* shader
     geometry_ = geom;
     shader_ = shader;
     texture_ = texture; 
-
+    render_gold_ = true;
 }
 
 
@@ -97,6 +97,9 @@ void GameObject::Render(glm::mat4 view_matrix, double current_time){
 
     // Set the "ghost" uniform in the shader
     shader_->SetUniform1i("ghost", render_ghost_ ? 1 : 0);
+
+    // Set the "ghost" uniform in the shader
+    shader_->SetUniform1i("gold", render_gold_ ? 1 : 0);
 
     // Set up the geometry
     geometry_->SetGeometry(shader_->GetShaderProgram());

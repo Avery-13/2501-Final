@@ -13,7 +13,7 @@ namespace game {
 
     class HUD {
     public:
-        HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix);
+        HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix, Shader* heart_shader);
         ~HUD();
 
         void Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft);

@@ -53,6 +53,7 @@ namespace game {
             void SetOrbit(float radius, float speed, glm::vec2 centre);
             void SetCollidable(bool isCollidable) { isCollidable_ = isCollidable; }
             void SetGhost(bool isGhost) { render_ghost_ = isGhost; }
+            void SetGold(bool isGold) { render_gold_ = isGold; }
             void SetTexture(GLuint texture) { texture_ = texture; }
 
 
@@ -82,6 +83,7 @@ namespace game {
 
             // Object's rendering mode
             bool render_ghost_ = false;
+            bool render_gold_;
 
             // Object's time variable
             float t = 0.0f;

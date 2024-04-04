@@ -81,6 +81,12 @@ void Game::Init(void)
     // Initialize sprite shader
     sprite_shader_.Init((resources_directory_g+std::string("/sprite_vertex_shader.glsl")).c_str(), (resources_directory_g+std::string("/sprite_fragment_shader.glsl")).c_str());
 
+    // Initialize HUD shader
+    hud_shader_.Init((resources_directory_g + std::string("/hud_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/hud_fragment_shader.glsl")).c_str());
+
+    // Initialize heart shader
+    heart_shader_.Init((resources_directory_g + std::string("/heart_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/heart_fragment_shader.glsl")).c_str());
+
     // Initialize time
     current_time_ = 0.0;
 }
@@ -105,6 +111,9 @@ Game::~Game()
 
 void Game::Setup(void)
 {
+    // Get window dimensions
+    int width, height;
+    glfwGetWindowSize(window_, &width, &height);
 
     // Setup the game world
 
@@ -149,7 +158,7 @@ void Game::Setup(void)
     background_objects_.push_back(background);
 
     // Initialize the HUD
-    hud_ = new HUD(resources_directory_g + "/textures/hud/", &sprite_shader_, glm::ortho(0.0f, static_cast<float>(window_width_g), static_cast<float>(window_height_g), 0.0f));
+    hud_ = new HUD(resources_directory_g + "/textures/hud/", &hud_shader_, glm::ortho(0.0f, (float)width, (float)height, 0.0f), &heart_shader_);
 
 
     // Nullify explosion
@@ -482,11 +491,13 @@ void Game::Render(void){
     float camera_zoom = 0.35f;
     glm::mat4 camera_zoom_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(camera_zoom, camera_zoom, camera_zoom));
     glm::mat4 view_matrix = window_scale_matrix * camera_zoom_matrix;
-    glm::mat4 hudProjection = glm::ortho(0.0f, static_cast<float>(window_width_g), static_cast<float>(window_height_g), 0.0f);
+    glm::mat4 hudProjection = glm::ortho(0.0f, (float)width, (float)height, 0.0f);
 
     view_matrix = glm::translate(view_matrix, glm::vec3(-1 * player_->GetPosition().x, -1 * player_->GetPosition().y, 0.0f));
+
     // Render the HUD
-    hud_->Render(hudProjection, current_time_);
+    hud_->Render(window_scale_matrix * camera_zoom_matrix, current_time_);
+
     // Render all game objects
     for (int i = 0; i < explosions_.size(); i++) {
 		explosions_[i]->Render(view_matrix, current_time_);
@@ -499,7 +510,6 @@ void Game::Render(void){
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);
 	}
-
 
 }
       

@@ -33,6 +33,8 @@ set(SRCS
     sprite.cpp
     sprite_vertex_shader.glsl
     sprite_fragment_shader.glsl
+    heart_vertex_shader.glsl
+    heart_fragment_shader.glsl
     timer.cpp
     collectible_game_object.cpp
     enemy_game_object.cpp

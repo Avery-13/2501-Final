@@ -59,6 +59,12 @@ namespace game {
             // Shader for rendering particles
             Shader particle_shader_;
 
+            // Shader for HUD
+            Shader hud_shader_;
+
+            // Shader for hearts
+            Shader heart_shader_;
+
             // References to textures
             // This needs to be a pointer
             GLuint *tex_;

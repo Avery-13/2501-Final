@@ -5,7 +5,7 @@
 
 namespace game {
 
-    HUD::HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix)
+    HUD::HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix, Shader* heart_shader)
         : shader_(shader), projectionMatrix_(projectionMatrix), score_(0), health_(0), collectibles_(0) {
 
 
@@ -23,43 +23,43 @@ namespace game {
         // Load the score label texture
         LoadTexture(scoreLabelTexture, (hudTexturePath + "score.png").c_str());
         LoadTexture(heartTexture, (hudTexturePath + "heart.png").c_str());
-        LoadTexture(goldHeartTexture, (hudTexturePath + "goldHeart.png").c_str());
         LoadTexture(emptyHeartTexture, (hudTexturePath + "emptyHeart.png").c_str());
         LoadTexture(coinTexture, (hudTexturePath + "coin.png").c_str());
         LoadTexture(emptyCoinTexture, (hudTexturePath + "coinOutline.png").c_str());
 
+
         // Position HUD elements at the top-left corner of the screen
-        glm::vec3 scorePosition(-0.7f, 0.8f, 0.0f); 
+        glm::vec3 scorePosition(-2.7f, 2.4f, 0.0f);
         GameObject* scoreLabelGO = new GameObject(scorePosition, sprite_, shader_, scoreLabelTexture);
-        scoreLabelGO->SetScale(glm::vec2(0.5f, 0.5f));
+        scoreLabelGO->SetScale(glm::vec2(1.8f, 0.6f));
         hudElements.push_back(scoreLabelGO);
 
 
-        glm::vec3 digitPosition(-0.3f, 0.8f, 0.0f); // Position on the HUD for the first digit
+        glm::vec3 digitPosition(-1.5f, 2.4f, 0.0f); // Position on the HUD for the first digit
         for (int i = 0; i < 4; ++i) { // Assuming a 4 digit score
             // Initialize each digit GameObject with the texture for '0'
             GameObject* digitGO = new GameObject(digitPosition, sprite_, shader_, numberTextures[0]);
-            digitGO->SetScale(glm::vec2(0.1, 0.1)); // Set an appropriate scale for your HUD
+            digitGO->SetScale(glm::vec2(0.4, 0.4)); // Set an appropriate scale for your HUD
             scoreDigits_.push_back(digitGO);
-            digitPosition.x += 0.05f; // Move position for the next digit
+            digitPosition.x += 0.3f; // Move position for the next digit
         }
 
-        glm::vec3 heartPosition(-0.8f, -0.8f, 0.0f); // Position on the HUD for the first heart
+        glm::vec3 heartPosition(-3.3f, -2.4f, 0.0f); // Position on the HUD for the first heart
         for (int i = 0; i < 3; ++i) { 
             
-            GameObject* heartGO = new GameObject(heartPosition, sprite_, shader_, heartTexture);
-            heartGO->SetScale(glm::vec2(0.2, 0.2)); // Set an appropriate scale for your HUD
+            GameObject* heartGO = new GameObject(heartPosition, sprite_, heart_shader, heartTexture);
+            heartGO->SetScale(glm::vec2(0.8, 0.8)); // Set an appropriate scale for your HUD
             hearts.push_back(heartGO);
-            heartPosition.x += 0.2f; // Move position for the next heart
+            heartPosition.x += 0.8f; // Move position for the next heart
         }
 
-        glm::vec3 coinPosition(0.45f, -0.8f, 0.0f); // Position on the HUD for the first coin
+        glm::vec3 coinPosition(1.8f, -2.4f, 0.0f); // Position on the HUD for the first coin
         for (int i = 0; i < 3; ++i) { 
             
             GameObject* coinGO = new GameObject(coinPosition, sprite_, shader_, emptyCoinTexture);
-            coinGO->SetScale(glm::vec2(0.15, 0.15)); // Set an appropriate scale for your HUD
+            coinGO->SetScale(glm::vec2(0.6, 0.6)); // Set an appropriate scale for your HUD
             coins.push_back(coinGO);
-            coinPosition.x += 0.2f; // Move position for the next coin
+            coinPosition.x += 0.8f; // Move position for the next coin
         }
 
         glm::vec3 timerDigitPosition(-0.7f, -0.6f, 0.0f); // Adjust position as needed
@@ -115,31 +115,30 @@ namespace game {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void HUD::Render(glm::mat4 hudProjection, double currentTime) {
+    void HUD::Render(glm::mat4 viewMatrix, double currentTime) {
         shader_->Enable();
-        shader_->SetUniformMat4("projectionMatrix", hudProjection);
 
         // Since we're now rendering in screen space, the view matrix is typically an identity matrix
         glm::mat4 identityMatrix = glm::mat4(1.0f);
 
         // Go through each element and render it with the viewMatrix and currentTime
         for (auto element : hudElements) {
-            element->Render(identityMatrix, currentTime);
+            element->Render(viewMatrix, currentTime);
         }
         for (auto element : scoreDigits_) {
-            element->Render(identityMatrix, currentTime);
+            element->Render(viewMatrix, currentTime);
         }
         for (auto element : hearts) {
-            element->Render(identityMatrix, currentTime);
+            element->Render(viewMatrix, currentTime);
         }
         for (auto element : coins) {
-            element->Render(identityMatrix, currentTime);
+            element->Render(viewMatrix, currentTime);
         }
 
         // Render the invincibility timer digits if the timer is running
         if (invincibilityTimer_.Running() && invincibilityTimer_.TimeLeft() > 0.0f) {
             for (auto digit : invincibilityTimerDigits_) {
-                digit->Render(identityMatrix, currentTime);
+                digit->Render(viewMatrix, currentTime);
             }
         }
     }
@@ -157,7 +156,7 @@ namespace game {
             if (i < health) {
                 // Player still has this heart
                 if (isInvincible) {
-                    hearts[i]->SetTexture(goldHeartTexture); 
+                    hearts[i]->SetGold(true);
                 }
                 else {
                     hearts[i]->SetTexture(heartTexture);
