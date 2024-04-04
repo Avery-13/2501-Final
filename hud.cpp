@@ -39,33 +39,33 @@ namespace game {
         for (int i = 0; i < 4; ++i) { // Assuming a 4 digit score
             // Initialize each digit GameObject with the texture for '0'
             GameObject* digitGO = new GameObject(digitPosition, sprite_, shader_, numberTextures[0]);
-            digitGO->SetScale(glm::vec2(0.3, 0.3)); // Set an appropriate scale for your HUD
+            digitGO->SetScale(glm::vec2(0.1, 0.1)); // Set an appropriate scale for your HUD
             scoreDigits_.push_back(digitGO);
-            digitPosition.x += 0.2f; // Move position for the next digit
+            digitPosition.x += 0.05f; // Move position for the next digit
         }
 
         glm::vec3 heartPosition(-0.8f, -0.8f, 0.0f); // Position on the HUD for the first heart
         for (int i = 0; i < 3; ++i) { 
             
             GameObject* heartGO = new GameObject(heartPosition, sprite_, shader_, heartTexture);
-            heartGO->SetScale(glm::vec2(0.3, 0.3)); // Set an appropriate scale for your HUD
+            heartGO->SetScale(glm::vec2(0.2, 0.2)); // Set an appropriate scale for your HUD
             hearts.push_back(heartGO);
             heartPosition.x += 0.2f; // Move position for the next heart
         }
 
-        glm::vec3 coinPosition(0.3f, -0.8f, 0.0f); // Position on the HUD for the first coin
+        glm::vec3 coinPosition(0.45f, -0.8f, 0.0f); // Position on the HUD for the first coin
         for (int i = 0; i < 3; ++i) { 
             
             GameObject* coinGO = new GameObject(coinPosition, sprite_, shader_, emptyCoinTexture);
-            coinGO->SetScale(glm::vec2(0.2, 0.2)); // Set an appropriate scale for your HUD
+            coinGO->SetScale(glm::vec2(0.15, 0.15)); // Set an appropriate scale for your HUD
             coins.push_back(coinGO);
-            coinPosition.x += 0.25f; // Move position for the next coin
+            coinPosition.x += 0.2f; // Move position for the next coin
         }
 
         glm::vec3 timerDigitPosition(-0.7f, -0.6f, 0.0f); // Adjust position as needed
         for (int i = 0; i < 2; ++i) { 
             GameObject* digitGO = new GameObject(timerDigitPosition, sprite_, shader_, numberTextures[0]);
-            digitGO->SetScale(glm::vec2(0.3, 0.3)); 
+            digitGO->SetScale(glm::vec2(0.1, 0.1)); 
             invincibilityTimerDigits_.push_back(digitGO);
             timerDigitPosition.x += 0.2f; 
         }
