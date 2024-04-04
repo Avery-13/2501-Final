@@ -234,7 +234,7 @@ void Game::MainLoop(void)
         Update(delta_time);
 
         // Update the HUD with new information
-        hud_->Update(score, player_->hp_, player_->objectsCollected_);
+        hud_->Update(score, player_->hp_, player_->objectsCollected_, player_->isInvincible_, player_->invincibilityTimer_.TimeLeft());
 
 
         // Render all the game objects

@@ -40,4 +40,17 @@ bool Timer::Finished(void)
     return false;
 }
 
+float Timer::TimeLeft(void) {
+    if (Running()) {
+        float currentTime = glfwGetTime();
+        float timeLeft = end_time_ - currentTime;
+        return timeLeft > 0 ? timeLeft : 0.0f;
+    }
+    return 0.0f;
+}
+
+void Timer::Stop(void) {
+    end_time_ = -1.0f; // Indicate that the timer is not running
+}
+
 } // namespace game
