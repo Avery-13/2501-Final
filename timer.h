@@ -20,6 +20,10 @@ namespace game {
             // Check if timer is running
             bool Running(void) { return end_time_ != -1.0f; }
 
+            float TimeLeft(void);
+
+            void Stop(void); // Method to stop the timer
+
         private:
             // End time
 			double end_time_;

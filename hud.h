@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include "sprite.h"
 #include <string>
+#include "timer.h"
 
 namespace game {
 
@@ -15,7 +16,7 @@ namespace game {
         HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix);
         ~HUD();
 
-        void Update(int score, int health, int collectibles);
+        void Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft);
         void Render(glm::mat4 hudProjection, double currentTime);
 
     private:
@@ -25,6 +26,9 @@ namespace game {
         std::vector<GameObject*> scoreDigits_;
         std::vector<GameObject*> hearts;
         std::vector<GameObject*> coins;
+
+        Timer invincibilityTimer_; // Timer for invincibility duration
+        std::vector<GameObject*> invincibilityTimerDigits_; // HUD elements for the timer digits
 
 
         int score_;
@@ -39,6 +43,7 @@ namespace game {
         GLuint emptyHeartTexture;
         GLuint coinTexture;
         GLuint emptyCoinTexture;
+        GLuint goldHeartTexture;;
 
 
         void LoadTexture(GLuint& texture, const char* filepath);

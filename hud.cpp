@@ -23,6 +23,7 @@ namespace game {
         // Load the score label texture
         LoadTexture(scoreLabelTexture, (hudTexturePath + "score.png").c_str());
         LoadTexture(heartTexture, (hudTexturePath + "heart.png").c_str());
+        LoadTexture(goldHeartTexture, (hudTexturePath + "goldHeart.png").c_str());
         LoadTexture(emptyHeartTexture, (hudTexturePath + "emptyHeart.png").c_str());
         LoadTexture(coinTexture, (hudTexturePath + "coin.png").c_str());
         LoadTexture(emptyCoinTexture, (hudTexturePath + "coinOutline.png").c_str());
@@ -61,6 +62,14 @@ namespace game {
             coinPosition.x += 0.25f; // Move position for the next coin
         }
 
+        glm::vec3 timerDigitPosition(-0.7f, -0.6f, 0.0f); // Adjust position as needed
+        for (int i = 0; i < 2; ++i) { 
+            GameObject* digitGO = new GameObject(timerDigitPosition, sprite_, shader_, numberTextures[0]);
+            digitGO->SetScale(glm::vec2(0.3, 0.3)); 
+            invincibilityTimerDigits_.push_back(digitGO);
+            timerDigitPosition.x += 0.2f; 
+        }
+
     }
 
     HUD::~HUD() {
@@ -74,6 +83,9 @@ namespace game {
             delete element;
         }
         for (auto element : coins) {
+            delete element;
+        }
+        for (auto element : invincibilityTimerDigits_) {
             delete element;
         }
         delete sprite_;
@@ -123,9 +135,16 @@ namespace game {
         for (auto element : coins) {
             element->Render(identityMatrix, currentTime);
         }
+
+        // Render the invincibility timer digits if the timer is running
+        if (invincibilityTimer_.Running() && invincibilityTimer_.TimeLeft() > 0.0f) {
+            for (auto digit : invincibilityTimerDigits_) {
+                digit->Render(identityMatrix, currentTime);
+            }
+        }
     }
 
-    void HUD::Update(int score, int health, int collectibles) {
+    void HUD::Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft) {
         score_ = score;
         health_ = health;
         collectibles_ = collectibles;
@@ -137,7 +156,13 @@ namespace game {
         for (int i = 0; i < 3; ++i) {
             if (i < health) {
                 // Player still has this heart
-                hearts[i]->SetTexture(heartTexture);
+                if (isInvincible) {
+                    hearts[i]->SetTexture(goldHeartTexture); 
+                }
+                else {
+                    hearts[i]->SetTexture(heartTexture);
+                }
+
             }
             else {
                 // Player has lost this heart
@@ -159,6 +184,22 @@ namespace game {
             int digitValue = scoreStr[i] - '0'; // Convert char to int
             scoreDigits_[i]->SetTexture(numberTextures[digitValue]);
         }
+
+        // Manage the invincibility timer
+        if (isInvincible) {
+            if (!invincibilityTimer_.Running()) {
+                invincibilityTimer_.Start(10.0f); // Start with a 10-second duration
+            }
+            // Convert the remaining time to digits and update the textures
+            int secondsLeft = static_cast<int>(invincibilityTimeLeft);
+            invincibilityTimerDigits_[0]->SetTexture(numberTextures[secondsLeft / 10]);
+            invincibilityTimerDigits_[1]->SetTexture(numberTextures[secondsLeft % 10]);
+        }
+        else {
+            // Stop the timer when invincibility ends
+            invincibilityTimer_.Stop();
+        }
+
     }
 
     // Rest of your HUD class methods...
