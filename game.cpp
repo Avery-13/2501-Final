@@ -100,6 +100,9 @@ Game::~Game()
     for (int i = 0; i < game_objects_.size(); i++){
         delete game_objects_[i];
     }
+    for (int i = 0; i < bullets_.size(); i++) {
+        delete bullets_[i];
+    }
 
     delete hud_;
 
@@ -207,7 +210,7 @@ void Game::SetAllTextures(void)
     // Declare all the textures here
     const char *texture[] = 
         {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
-        "/textures/coin.png", "/textures/axe.png"};
+        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references
@@ -303,6 +306,9 @@ void Game::HandleControls(double delta_time)
 		// Speed boost the player
         dynamic_cast<PlayerGameObject*>(player)->SetSpeed(2.0f);
 	}
+    if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        SpawnBullet(player->GetPosition(), player->GetBearing());
+    }
 }
 
 
@@ -361,6 +367,24 @@ void Game::Update(double delta_time)
 	}
 
     // Update all game objects
+
+    for (int i = 0; i < bullets_.size(); i++) {
+        BulletGameObject* current_game_object = bullets_[i];
+        // Update the current game object
+        current_game_object->Update(delta_time);
+
+        if (current_game_object->IsMarkedForDeletion()) {
+            // Find the object in the bullets vector
+            auto it = std::find(bullets_.begin(), bullets_.end(), current_game_object);
+
+            // If found, remove it
+            if (it != bullets_.end()) {
+                delete* it; // Free memory if objects are dynamically allocated
+                bullets_.erase(it);
+            }
+        }
+    }
+
     for (int i = 0; i < game_objects_.size(); i++) {
         // Get the current game object
         GameObject* current_game_object = game_objects_[i];
@@ -462,6 +486,7 @@ void Game::Update(double delta_time)
                 std::cout<< "Player current HP: " << player->hp_ << std::endl;
             }
         }
+       
     }
 }
 
@@ -502,7 +527,9 @@ void Game::Render(void){
     for (int i = 0; i < explosions_.size(); i++) {
 		explosions_[i]->Render(view_matrix, current_time_);
 	}
-
+    for (int i = 0; i < bullets_.size(); i++) {
+        bullets_[i]->Render(view_matrix, current_time_);
+    }
     for (int i = 0; i < game_objects_.size(); i++) {
         game_objects_[i]->Render(view_matrix, current_time_);
     }
@@ -511,6 +538,14 @@ void Game::Render(void){
 		background_objects_[i]->Render(view_matrix, current_time_);
 	}
 
+
+}
+
+void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction) {
+    GLuint bulletTexture = tex_[9]; 
+    float speed = 1.0f;
+    BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, speed);
+    bullets_.push_back(bullet);
 }
       
 } // namespace game

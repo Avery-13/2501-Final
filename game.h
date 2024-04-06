@@ -14,6 +14,7 @@
 #include "tile.h"
 #include "hud.h"
 #include "player_game_object.h"
+#include "bullet_game_object.h"
 
 namespace game {
 
@@ -81,6 +82,9 @@ namespace game {
             //List of explosion objects
             std::vector<ExplosionGameObject*> explosions_;
 
+            // list for bullets
+            std::vector<BulletGameObject*> bullets_;
+
             // Explosion object
             GameObject* explosion_;
 
@@ -116,6 +120,8 @@ namespace game {
  
             // Render the game world
             void Render(void);
+
+            void SpawnBullet(glm::vec3 position, glm::vec3 direction);
 
     }; // class Game
 

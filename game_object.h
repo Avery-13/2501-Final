@@ -35,6 +35,7 @@ namespace game {
             bool IsCollidable(void) const { return isCollidable_; }
             bool IsOrbiting(void) const { return isOrbiting_; }
             bool IsGhost(void) const { return render_ghost_; }
+            bool IsDisabled(void) const { return disabled_; }
 
             // Get bearing direction (direction in which the game object
             // is facing)
@@ -55,6 +56,13 @@ namespace game {
             void SetGhost(bool isGhost) { render_ghost_ = isGhost; }
             void SetGold(bool isGold) { render_gold_ = isGold; }
             void SetTexture(GLuint texture) { texture_ = texture; }
+            void SetDisabled(bool disabled) { disabled_ = disabled; }
+
+            // Method to mark the object for deletion
+            void MarkForDeletion() { marked_for_deletion_ = true; }
+
+            // Getter to check if the object is marked for deletion
+            bool IsMarkedForDeletion() const { return marked_for_deletion_; }
 
 
         protected:
@@ -87,6 +95,10 @@ namespace game {
 
             // Object's time variable
             float t = 0.0f;
+
+            bool disabled_ = false;
+
+            bool marked_for_deletion_ = false;
 
     }; // class GameObject
 
