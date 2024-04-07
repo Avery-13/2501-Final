@@ -3,6 +3,7 @@
 
 #include "game_object.h"
 #include "timer.h"
+#include "particle_system.h"
 
 namespace game {
 
@@ -20,19 +21,23 @@ namespace game {
             void SetSpeed(float speed);
 
             void takeDamage();
-
+            
+            // Stats
             int hp_;
             int objectsCollected_;
             bool isInvincible_;
             Timer invincibilityTimer_;
             float base_speed_ = 4.0f;
             float curr_speed_ = base_speed_;
-
             glm::vec3 velocity_;
 
+            // Animation
             Timer animationTimer_;
             int currentFrame_ = 0;
             float animationSpeed_;
+
+            // Particle Systems
+            ParticleSystem *grass_;
 
     }; // class PlayerGameObject
 
