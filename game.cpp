@@ -154,6 +154,11 @@ void Game::Setup(void)
     game_objects_[8]->SetScale(glm::vec2(0.5f, 0.5f));
     game_objects_[8]->SetCollidable(false);
 
+    // Setup particle system
+    GameObject* particles = new ParticleSystem(glm::vec3(-0.5f, 0.0f, 0.0f), particles_, &particle_shader_, tex_[4], game_objects_[0]);
+    particles->SetRotation(-pi_over_two);
+    game_objects_.push_back(particles);
+
     // Setup background
     // In this specific implementation, the background is always the last object
     GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[4]);
@@ -533,7 +538,6 @@ void Game::Render(void){
     for (int i = 0; i < game_objects_.size(); i++) {
         game_objects_[i]->Render(view_matrix, current_time_);
     }
-
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);
 	}

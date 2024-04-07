@@ -15,6 +15,7 @@
 #include "hud.h"
 #include "player_game_object.h"
 #include "bullet_game_object.h"
+#include "particle_system.h"
 
 namespace game {
 
