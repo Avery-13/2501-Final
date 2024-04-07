@@ -20,6 +20,8 @@ set(HDRS
     tile.h
     bullet_game_object.h
     hud.h
+    particles.h
+    particle_system.h
 )
  
 set(SRCS
@@ -33,6 +35,8 @@ set(SRCS
     sprite.cpp
     sprite_vertex_shader.glsl
     sprite_fragment_shader.glsl
+    particle_fragment_shader.glsl
+    particle_vertex_shader.glsl
     heart_vertex_shader.glsl
     heart_fragment_shader.glsl
     timer.cpp
@@ -42,6 +46,8 @@ set(SRCS
     tile.cpp
     bullet_game_object.cpp
     hud.cpp
+    particles.cpp
+    particle_system.cpp
 )
 
 # Add path name to configuration file

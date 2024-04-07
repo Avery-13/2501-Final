@@ -54,7 +54,7 @@ void Particles::CreateGeometry(void)
         if (i % 4 == 0){
             // Get three random values
             //theta = (two_pi*(rand() % 1000) / 1000.0f);
-            theta = (2.0*(rand() % 10000) / 10000.0f -1.0f)*0.33f + pi;
+            theta = (200.0*(rand() % 10000) / 10000.0f -1.0f)*0.33f + pi;
             r = 0.0f + 0.8*(rand() % 10000) / 10000.0f;
             tmod = (rand() % 10000) / 10000.0f;
         }

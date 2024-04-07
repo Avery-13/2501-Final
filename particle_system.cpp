@@ -30,7 +30,7 @@ void ParticleSystem::Render(glm::mat4 view_matrix, double current_time){
     shader_->SetUniformMat4("view_matrix", view_matrix);
 
     // Setup the scaling matrix for the shader
-    glm::mat4 scaling_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(scale_, scale_, 1.0));
+    glm::mat4 scaling_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(scale_.x, scale_.y, 1.0));
 
     // Setup the rotation matrix for the shader
     glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), angle_, glm::vec3(0.0, 0.0, 1.0));
