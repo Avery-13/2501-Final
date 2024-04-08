@@ -8,6 +8,7 @@
 #include <path_config.h>
 
 #include "sprite.h"
+#include "particles.h"
 #include "tile.h"
 #include "shader.h"
 #include "player_game_object.h"
@@ -78,6 +79,10 @@ void Game::Init(void)
     tile_->CreateGeometry();
     score = 0;
 
+    // Initialize particle geometry
+    particles_ = new Particles();
+    particles_->CreateGeometry();
+
     // Initialize sprite shader
     sprite_shader_.Init((resources_directory_g+std::string("/sprite_vertex_shader.glsl")).c_str(), (resources_directory_g+std::string("/sprite_fragment_shader.glsl")).c_str());
 
@@ -86,6 +91,9 @@ void Game::Init(void)
 
     // Initialize heart shader
     heart_shader_.Init((resources_directory_g + std::string("/heart_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/heart_fragment_shader.glsl")).c_str());
+
+    // Initialize particle shader
+    particle_shader_.Init((resources_directory_g + std::string("/particle_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/particle_fragment_shader.glsl")).c_str());
 
     // Initialize time
     current_time_ = 0.0;
@@ -97,6 +105,7 @@ Game::~Game()
     // Free memory for all objects
     // Only need to delete objects that are not automatically freed
     delete sprite_;
+    delete particles_;
     for (int i = 0; i < game_objects_.size(); i++){
         delete game_objects_[i];
     }
@@ -163,6 +172,11 @@ void Game::Setup(void)
     // Initialize the HUD
     hud_ = new HUD(resources_directory_g + "/textures/hud/", &hud_shader_, glm::ortho(0.0f, (float)width, (float)height, 0.0f), &heart_shader_);
 
+    // Setup particle system
+    GameObject* particles = new ParticleSystem(glm::vec3(-0.5f, 0.0f, 0.0f), particles_, &particle_shader_, tex_[4], game_objects_[0]);
+    particles->SetScale(glm::vec2(0.5f, 0.5f));
+    particles->SetRotation(-pi_over_two);
+    game_objects_.push_back(particles);
 
     // Nullify explosion
     explosion_ = NULL;
@@ -533,7 +547,6 @@ void Game::Render(void){
     for (int i = 0; i < game_objects_.size(); i++) {
         game_objects_[i]->Render(view_matrix, current_time_);
     }
-
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);
 	}
