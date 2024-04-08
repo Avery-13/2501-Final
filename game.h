@@ -39,6 +39,10 @@ namespace game {
             // Run the game (keep the game active)
             void MainLoop(void); 
 
+            glm::vec3 CalculateDirectionVector(float angleRadians);
+
+            float GetRotationAngleFromDirection(glm::vec3 direction);
+
         private:
             // Main window: pointer to the GLFW window structure
             GLFWwindow *window_;
@@ -101,6 +105,9 @@ namespace game {
             //total score
             int score;
 
+            float lastShotTime_; // Time since the last shot was fired
+            const float shotCooldown_ = 1.0f; // Cooldown period in seconds
+
             // Current amount of collected objects
             int collected_objects_;
 
@@ -123,6 +130,7 @@ namespace game {
             void Render(void);
 
             void SpawnBullet(glm::vec3 position, glm::vec3 direction);
+
 
     }; // class Game
 

@@ -78,6 +78,7 @@ void Game::Init(void)
     sprite_->CreateGeometry();
     tile_->CreateGeometry();
     score = 0;
+    lastShotTime_ = -shotCooldown_;
 
     // Initialize particle geometry
     particles_ = new Particles();
@@ -555,10 +556,32 @@ void Game::Render(void){
 }
 
 void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction) {
-    GLuint bulletTexture = tex_[9]; 
-    float speed = 1.0f;
-    BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, speed);
-    bullets_.push_back(bullet);
+
+    double currentTime = glfwGetTime();
+
+    if (currentTime - lastShotTime_ >= shotCooldown_) {
+        GLuint bulletTexture = tex_[9]; 
+        float speed = 3.0f;
+        BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, speed);
+        bullets_.push_back(bullet);
+        lastShotTime_ = currentTime;
+    }
+
+}
+
+glm::vec3 Game::CalculateDirectionVector(float angleRadians) {
+    return glm::vec3(cos(angleRadians), sin(angleRadians), 0.0f);
+}
+
+float Game::GetRotationAngleFromDirection(glm::vec3 direction) {
+    // Normalize the direction vector
+    glm::vec3 normalizedDirection = glm::normalize(direction);
+
+    // Calculate the angle in radians from the normalized direction vector
+    // atan2 returns the angle between the positive x-axis and the point (y, x)
+    float angleRadians = atan2(normalizedDirection.y, normalizedDirection.x);
+
+    return angleRadians;
 }
       
 } // namespace game
