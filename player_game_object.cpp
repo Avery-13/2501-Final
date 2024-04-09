@@ -87,4 +87,5 @@ void PlayerGameObject::takeDamage() {
 	hp_--;
 }
 
+
 } // namespace game

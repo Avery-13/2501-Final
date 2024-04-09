@@ -136,7 +136,7 @@ void Game::Setup(void)
 
     // Setup the player object (position, texture, vertex count)
     // Note that, in this specific implementation, the player object should always be the first object in the game object vector 
-    player_ = new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[0]);
+    player_ = new PlayerGameObject(glm::vec3(0.0f, 0.0f, -1.0f), sprite_, &sprite_shader_, tex_[0]);
     game_objects_.push_back(player_);
     game_objects_[0]->SetRotation(pi_over_two);
 
@@ -177,7 +177,7 @@ void Game::Setup(void)
 
     // Setup particle system
     GameObject* particles = new ParticleSystem(glm::vec3(0.0f, 0.0f, 0.0f), particles_, &particle_shader_, tex_[10], game_objects_[0]);
-    particles->SetScale(glm::vec2(0.2f, 0.2f));
+    particles->SetScale(glm::vec2(0.4f, 0.4f));
     particles->SetRotation(-pi_over_two);
     particles->SetCollidable(false);
     grass_particle_system_ = dynamic_cast<ParticleSystem*>(particles);
@@ -290,6 +290,9 @@ void Game::HandleControls(double delta_time)
     float speed = delta_time*1500.0;
     float motion_increment = 0.001*speed;
     float angle_increment = (glm::pi<float>() / 1200.0f)*speed;
+    // Get window dimensions
+    int width, height;
+    glfwGetWindowSize(window_, &width, &height);
 
     // Check for escape key press
     if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -325,7 +328,13 @@ void Game::HandleControls(double delta_time)
         dynamic_cast<PlayerGameObject*>(player)->SetSpeed(2.0f);
 	}
     if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        SpawnBullet(player->GetPosition(), player->GetBearing());
+        double xpos, ypos;
+        //getting cursor position
+        glfwGetCursorPos(window_, &xpos, &ypos);
+        glm::vec3 direction = glm::vec3(xpos - width/2, ypos - height/2, 0.0f);
+        float bulletAngle = atan2((-1)*direction.y, direction.x);
+        direction = CalculateDirectionVector(bulletAngle);
+        SpawnBullet(player->GetPosition(), direction);
     }
 }
 
@@ -430,7 +439,11 @@ void Game::Update(double delta_time)
             GameObject* other_game_object = game_objects_[j];
 
             // Compute distance between object i and object j
-            float distance = glm::length(current_game_object->GetPosition() - other_game_object->GetPosition());
+            glm::vec3 curr_pos = current_game_object->GetPosition();
+            curr_pos.z = 0.0f;
+            glm::vec3 other_pos = other_game_object->GetPosition();
+            other_pos.z = 0.0f;
+            float distance = glm::length(curr_pos - other_pos);
 
             PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
             EnemyGameObject* enemy = dynamic_cast<EnemyGameObject*>(other_game_object);
@@ -454,7 +467,7 @@ void Game::Update(double delta_time)
                 CollectibleGameObject* collectible = dynamic_cast<CollectibleGameObject*>(other_game_object);
                 PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
                 if (collectible && player) {
-					game_objects_[j]->SetGhost(true);
+					game_objects_[j]->MarkForDeletion();
                     game_objects_[j]->SetCollidable(false);
 					std::cout << "Collected a collectible object!" << std::endl;
                     PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(game_objects_[i]);
@@ -578,7 +591,7 @@ void Game::Render(void){
         bullets_[i]->Render(view_matrix, current_time_);
     }
     // Render all game objects
-    for (int i = 0; i < game_objects_.size(); i++) {
+    for (int i = 1; i < game_objects_.size(); i++) {
         game_objects_[i]->Render(view_matrix, current_time_);
     }
     // Render background objects
@@ -588,12 +601,16 @@ void Game::Render(void){
     // Render grass particle system
 	grass_particle_system_->Render(view_matrix, current_time_);
 
+    // Render player object
+    game_objects_[0]->Render(view_matrix, current_time_);
+
 
 }
 
 void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction) {
 
     double currentTime = glfwGetTime();
+    position.z = 0.0f;
 
     if (currentTime - lastShotTime_ >= shotCooldown_) {
         GLuint bulletTexture = tex_[9]; 
