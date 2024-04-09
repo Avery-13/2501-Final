@@ -62,12 +62,12 @@ namespace game {
             coinPosition.x += 0.8f; // Move position for the next coin
         }
 
-        glm::vec3 timerDigitPosition(-0.7f, -0.6f, 0.0f); // Adjust position as needed
+        glm::vec3 timerDigitPosition(-3.3f, -1.8f, 0.0f); // Adjust position as needed
         for (int i = 0; i < 2; ++i) { 
             GameObject* digitGO = new GameObject(timerDigitPosition, sprite_, shader_, numberTextures[0]);
-            digitGO->SetScale(glm::vec2(0.1, 0.1)); 
+            digitGO->SetScale(glm::vec2(0.5, 0.5)); 
             invincibilityTimerDigits_.push_back(digitGO);
-            timerDigitPosition.x += 0.2f; 
+            timerDigitPosition.x += 0.4f; 
         }
 
     }
@@ -159,6 +159,7 @@ namespace game {
                     hearts[i]->SetGold(true);
                 }
                 else {
+                    hearts[i]->SetGold(false);
                     hearts[i]->SetTexture(heartTexture);
                 }
 

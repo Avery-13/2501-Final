@@ -23,6 +23,14 @@ void ParticleSystem::Update(double delta_time) {
 
 void ParticleSystem::Render(glm::mat4 view_matrix, double current_time){
 
+    // Enable depth testing
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    // Enable blending for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // Set up the shader
     shader_->Enable();
 
@@ -53,8 +61,6 @@ void ParticleSystem::Render(glm::mat4 view_matrix, double current_time){
         std::cout << "Error: ParticleSystem::Render: Could not get parent transformation matrix" << std::endl;
     }
 
-    
-
     // Set the transformation matrix in the shader
     shader_->SetUniformMat4("transformation_matrix", transformation_matrix);
 
@@ -69,6 +75,10 @@ void ParticleSystem::Render(glm::mat4 view_matrix, double current_time){
 
     // Draw the entity
     glDrawElements(GL_TRIANGLES, geometry_->GetSize(), GL_UNSIGNED_INT, 0);
+
+    // Disable blending and depth testing after rendering particles
+    glDisable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
 }
 
 } // namespace game

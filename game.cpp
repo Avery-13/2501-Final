@@ -173,10 +173,11 @@ void Game::Setup(void)
     hud_ = new HUD(resources_directory_g + "/textures/hud/", &hud_shader_, glm::ortho(0.0f, (float)width, (float)height, 0.0f), &heart_shader_);
 
     // Setup particle system
-    GameObject* particles = new ParticleSystem(glm::vec3(-0.5f, 0.0f, 0.0f), particles_, &particle_shader_, tex_[4], game_objects_[0]);
-    particles->SetScale(glm::vec2(0.5f, 0.5f));
+    GameObject* particles = new ParticleSystem(glm::vec3(-0.5f, 0.0f, 0.0f), particles_, &particle_shader_, tex_[10], game_objects_[0]);
+    particles->SetScale(glm::vec2(0.2f, 0.2f));
     particles->SetRotation(-pi_over_two);
-    game_objects_.push_back(particles);
+    particles->SetCollidable(false);
+    grass_particle_system_ = dynamic_cast<ParticleSystem*>(particles);
 
     // Nullify explosion
     explosion_ = NULL;
@@ -224,7 +225,7 @@ void Game::SetAllTextures(void)
     // Declare all the textures here
     const char *texture[] = 
         {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
-        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png"};
+        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png", "/textures/orb.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references
@@ -537,19 +538,24 @@ void Game::Render(void){
     // Render the HUD
     hud_->Render(window_scale_matrix * camera_zoom_matrix, current_time_);
 
-    // Render all game objects
+    // Render explosions objects
     for (int i = 0; i < explosions_.size(); i++) {
 		explosions_[i]->Render(view_matrix, current_time_);
 	}
+    // Render bullet objects
     for (int i = 0; i < bullets_.size(); i++) {
         bullets_[i]->Render(view_matrix, current_time_);
     }
+    // Render all game objects
     for (int i = 0; i < game_objects_.size(); i++) {
         game_objects_[i]->Render(view_matrix, current_time_);
     }
+    // Render background objects
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);
 	}
+    // Render grass particle system
+	grass_particle_system_->Render(view_matrix, current_time_);
 
 
 }

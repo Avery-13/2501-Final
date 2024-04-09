@@ -89,6 +89,9 @@ namespace game {
             // Explosion object
             GameObject* explosion_;
 
+            // Grass Particle System
+            ParticleSystem* grass_particle_system_;
+
             // Keep track of time
             double current_time_;
 
