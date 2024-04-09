@@ -74,9 +74,6 @@ void Particles::CreateGeometry(void)
         particles[i*vertex_attr + 5] = vertex[(i % 4) * 7 + 5];
         particles[i*vertex_attr + 6] = vertex[(i % 4) * 7 + 6];
 
-        // Randomize rotation of the particle
-        particles[i*vertex_attr + 7] = (two_pi*(rand() % 1000) / 1000.0f);
-
     }
 
     // Initialize all the particle faces
