@@ -89,6 +89,8 @@ void GameObject::Render(glm::mat4 view_matrix, double current_time){
     // Set up the translation matrix for the shader
     glm::mat4 translation_matrix = glm::translate(glm::mat4(1.0f), position_);
 
+    // Use the player's homogenous coordinate to adjust the translation
+
     // Setup the transformation matrix for the shader
     glm::mat4 transformation_matrix = translation_matrix * rotation_matrix * scaling_matrix;
 

@@ -31,7 +31,6 @@ namespace game {
 
         // Check if the bullet's life_timer_ exceeds its lifespan_
         if (life_timer_ >= lifespan_) {
-            
             MarkForDeletion(); 
         }
 

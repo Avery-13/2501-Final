@@ -176,7 +176,7 @@ void Game::Setup(void)
     hud_ = new HUD(resources_directory_g + "/textures/hud/", &hud_shader_, glm::ortho(0.0f, (float)width, (float)height, 0.0f), &heart_shader_);
 
     // Setup particle system
-    GameObject* particles = new ParticleSystem(glm::vec3(-0.5f, 0.0f, 0.0f), particles_, &particle_shader_, tex_[10], game_objects_[0]);
+    GameObject* particles = new ParticleSystem(glm::vec3(0.0f, 0.0f, 0.0f), particles_, &particle_shader_, tex_[10], game_objects_[0]);
     particles->SetScale(glm::vec2(0.2f, 0.2f));
     particles->SetRotation(-pi_over_two);
     particles->SetCollidable(false);
@@ -228,7 +228,7 @@ void Game::SetAllTextures(void)
     // Declare all the textures here
     const char *texture[] = 
         {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
-        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png", "/textures/orb.png", "/textures/enemy_grey.png"};
+        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png", "/textures/grass_particle.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references
@@ -289,7 +289,7 @@ void Game::HandleControls(double delta_time)
     // if translation or rotation is too slow
     float speed = delta_time*1500.0;
     float motion_increment = 0.001*speed;
-    float angle_increment = (glm::pi<float>() / 1800.0f)*speed;
+    float angle_increment = (glm::pi<float>() / 1200.0f)*speed;
 
     // Check for escape key press
     if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -597,7 +597,7 @@ void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction) {
 
     if (currentTime - lastShotTime_ >= shotCooldown_) {
         GLuint bulletTexture = tex_[9]; 
-        float speed = 3.0f;
+        float speed = 7.0f;
         BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, speed);
         bullets_.push_back(bullet);
         lastShotTime_ = currentTime;
