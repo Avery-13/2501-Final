@@ -3,7 +3,7 @@
 
 #include "geometry.h"
 
-#define NUM_PARTICLES 4000
+#define NUM_PARTICLES 200
 
 namespace game {
 
