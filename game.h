@@ -43,6 +43,10 @@ namespace game {
 
             float GetRotationAngleFromDirection(glm::vec3 direction);
 
+            void SpawnBullet(glm::vec3 position, glm::vec3 direction);
+
+            void AddBullet(BulletGameObject* bullet);
+
         private:
             // Main window: pointer to the GLFW window structure
             GLFWwindow *window_;
@@ -132,7 +136,6 @@ namespace game {
             // Render the game world
             void Render(void);
 
-            void SpawnBullet(glm::vec3 position, glm::vec3 direction);
 
 
     }; // class Game

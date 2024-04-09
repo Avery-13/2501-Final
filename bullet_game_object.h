@@ -1,3 +1,6 @@
+#ifndef BULLET_GAME_OBJECT_H
+#define BULLET_GAME_OBJECT_H
+
 #include "game_object.h"
 #include "particle_system.h"
 
@@ -22,3 +25,4 @@ namespace game {
     };
 
 } // namespace game
+#endif // BULLET_GAME_OBJECT_H
