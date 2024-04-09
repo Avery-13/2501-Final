@@ -78,6 +78,7 @@ void Game::Init(void)
     sprite_->CreateGeometry();
     tile_->CreateGeometry();
     score = 0;
+    lastShotTime_ = -shotCooldown_;
 
     // Initialize particle geometry
     particles_ = new Particles();
@@ -421,6 +422,8 @@ void Game::Update(double delta_time)
         // Note the loop bounds: we avoid testing the last object since
         // it's the background covering the whole game world
 
+
+
         for (int j = i + 1; j < (game_objects_.size()); j++) {
             GameObject* other_game_object = game_objects_[j];
 
@@ -465,7 +468,7 @@ void Game::Update(double delta_time)
                 //Check for exceptions where collisions should be ignored
                 EnemyGameObject* curr_enemy = dynamic_cast<EnemyGameObject*>(current_game_object);
                 EnemyGameObject* other_enemy = dynamic_cast<EnemyGameObject*>(other_game_object);
-                if (curr_enemy) {
+                if (curr_enemy && other_enemy) {
                     //std::cout<< "Both Enemy Collision" << std::endl;
                     continue;
 				}
@@ -498,8 +501,34 @@ void Game::Update(double delta_time)
                     game_objects_.erase(game_objects_.begin() + j);
 				}
 
-                std::cout<< "Player current HP: " << player->hp_ << std::endl;
+                if (player) {
+                    std::cout<< "Player current HP: " << player->hp_ << std::endl;
+                }
+
             }
+        }
+
+        for (int j = 0; j < (bullets_.size()); j++) {
+            BulletGameObject* bullet = bullets_[j];
+            float distance = glm::length(current_game_object->GetPosition() - bullet->GetPosition());
+
+            EnemyGameObject* enemy = dynamic_cast<EnemyGameObject*>(current_game_object);
+
+            if (enemy) {
+                // If distance is below a threshold, we have a collision
+                if (distance < 0.6f) {
+                    // Check if collision is with a collidable object
+                    if (!(enemy->IsCollidable())) {
+                        break;
+                    }
+                    score += 100;
+                    std::cout << "Explosion Started" << std::endl;
+                    explosions_.push_back(new ExplosionGameObject(enemy->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
+                    game_objects_.erase(game_objects_.begin() + i);
+
+                }
+            }
+
         }
        
     }
@@ -561,10 +590,32 @@ void Game::Render(void){
 }
 
 void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction) {
-    GLuint bulletTexture = tex_[9]; 
-    float speed = 1.0f;
-    BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, speed);
-    bullets_.push_back(bullet);
+
+    double currentTime = glfwGetTime();
+
+    if (currentTime - lastShotTime_ >= shotCooldown_) {
+        GLuint bulletTexture = tex_[9]; 
+        float speed = 3.0f;
+        BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, speed);
+        bullets_.push_back(bullet);
+        lastShotTime_ = currentTime;
+    }
+
+}
+
+glm::vec3 Game::CalculateDirectionVector(float angleRadians) {
+    return glm::vec3(cos(angleRadians), sin(angleRadians), 0.0f);
+}
+
+float Game::GetRotationAngleFromDirection(glm::vec3 direction) {
+    // Normalize the direction vector
+    glm::vec3 normalizedDirection = glm::normalize(direction);
+
+    // Calculate the angle in radians from the normalized direction vector
+    // atan2 returns the angle between the positive x-axis and the point (y, x)
+    float angleRadians = atan2(normalizedDirection.y, normalizedDirection.x);
+
+    return angleRadians;
 }
       
 } // namespace game
