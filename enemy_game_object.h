@@ -20,6 +20,8 @@ namespace game {
         int state_;
         float radius = 3.0f;
         float t = 0;
+        float speed = 1.4f;
+        float followTime = 2.0f;
         glm::vec3 velocity;
         glm::vec3 player_pos_;
         glm::vec3 start_pos_;

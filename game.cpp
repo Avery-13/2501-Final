@@ -16,6 +16,7 @@
 #include "enemy_game_object.h"
 #include "game.h"
 #include "timer.h"
+#include "projectile_shooting_enemy.h"
 
 namespace game {
 
@@ -141,8 +142,9 @@ void Game::Setup(void)
 
 
     // Setup enemy objects
-    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[3]));
+    game_objects_.push_back(new ProjectileShootingEnemy(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[11]));
     game_objects_[1]->SetRotation(pi_over_two);
+
 
     // Setup collectible objects
     game_objects_.push_back(new CollectibleGameObject(glm::vec3(2.0f, 2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
@@ -226,7 +228,7 @@ void Game::SetAllTextures(void)
     // Declare all the textures here
     const char *texture[] = 
         {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
-        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png", "/textures/grass_particle.png"};
+        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png", "/textures/grass_particle.png", "/textures/enemy_grey.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references

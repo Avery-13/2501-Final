@@ -38,15 +38,15 @@ namespace game {
 			if (!update_timer_.Running()) {
 				//std::cout << "intercepting timer started" << std::endl;
 				velocity = glm::normalize(player_pos_ - GameObject::GetPosition());
-				velocity *= 1.4f;
+				velocity *= speed;
 				GameObject::SetRotation(atan2(velocity.y, velocity.x));
-				update_timer_.Start(2.0f);
+				update_timer_.Start(followTime);
 			}
 			else if (update_timer_.Finished()) {
 				velocity = glm::normalize(player_pos_ - GameObject::GetPosition());
-				velocity *= 1.4f;
+				velocity *= speed;
 				GameObject::SetRotation(atan2(velocity.y, velocity.x));
-				update_timer_.Start(2.0f);
+				update_timer_.Start(followTime);
 			}
 
 			//std::cout << "Velocity: " << velocity.x << " " << velocity.y << " " << velocity.z << std::endl;
