@@ -19,6 +19,9 @@ namespace game {
         float shootCooldownTime_;
         float timeSinceLastShot_;
         Game* game_;
+        GLuint bulletTex;
+
+        void LoadTexture(GLuint& texture, const char* filepath);
     };
 
 } // namespace game

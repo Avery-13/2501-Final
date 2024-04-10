@@ -4,9 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp> 
 namespace game {
 
-    BulletGameObject::BulletGameObject(const glm::vec3& position, Geometry* geometry, Shader* shader, GLuint texture, const glm::vec3& direction, float speed)
+    BulletGameObject::BulletGameObject(const glm::vec3& position, Geometry* geometry, Shader* shader, GLuint texture, const glm::vec3& direction, float speed, bool isFriendlyProjectile)
         : GameObject(position, geometry, shader, texture), direction_(direction), speed_(speed), lifespan_(5.0f), life_timer_(0.0f) {
 
+        isFriendly = isFriendlyProjectile;
         SetScale(glm::vec2(0.5, 0.5));
         glm::vec3 normalizedDirection = glm::normalize(direction);
 
