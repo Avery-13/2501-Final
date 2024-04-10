@@ -28,6 +28,7 @@ set(HDRS
     disc_collectible_game_object.h
     sparkle_particles.h
     sparkle_particle_system.h
+    bomb_game_object.h
 )
  
 set(SRCS
@@ -62,6 +63,7 @@ set(SRCS
     sparkle_particle_system.cpp
     sparkle_particle_vertex_shader.glsl
     sparkle_particle_fragment_shader.glsl
+    bomb_game_object.cpp
 )
 
 # Add path name to configuration file
