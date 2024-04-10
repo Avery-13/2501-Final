@@ -45,6 +45,7 @@ void Particles::CreateGeometry(void)
     float theta, r, tmod;
     float pi = glm::pi<float>();
     float two_pi = 2.0f*pi;
+    float angle;
 
     for (int i = 0; i < NUM_PARTICLES; i++){
         // Check if we are initializing a new particle
@@ -57,11 +58,14 @@ void Particles::CreateGeometry(void)
             theta = (200.0*(rand() % 10000) / 10000.0f -1.0f)*0.33f + pi;
             r = 0.0f + 0.6*(rand() % 10000) / 10000.0f;
             tmod = (rand() % 10000) / 10000.0f;
+            angle = static_cast<float>(rand()) / RAND_MAX * two_pi; // Generate random angle
         }
 
         // Copy position from standard sprite
-        particles[i*vertex_attr + 0] = vertex[(i % 4) * 7 + 0];
-        particles[i*vertex_attr + 1] = vertex[(i % 4) * 7 + 1];
+        glm::vec2 rand_rotation = glm::vec2(vertex[(i % 4) * 7 + 0], vertex[(i % 4) * 7 + 1]);
+        particles[i*vertex_attr + 0] = rand_rotation.x * cos(angle) - rand_rotation.y * sin(angle);
+        particles[i*vertex_attr + 1] = rand_rotation.x * sin(angle) + rand_rotation.y * cos(angle);
+
 
         // Set direction based on random values
         particles[i*vertex_attr + 2] = sin(theta)*r;

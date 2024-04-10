@@ -147,27 +147,20 @@ void Game::Setup(void)
 
 
     // Setup collectible objects
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(2.0f, 2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
-    game_objects_[2]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
-    game_objects_[3]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, 3.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
-    game_objects_[4]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(4.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
-    game_objects_[5]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(-1.0f, -3.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
-    game_objects_[6]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_.push_back(new CollectibleGameObject(glm::vec3(3.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
-    game_objects_[7]->SetScale(glm::vec2(0.5f, 0.5f));
-
-    // Setup orbiting axe object
-    game_objects_.push_back(new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), sprite_, &sprite_shader_, tex_[8]));
-    game_objects_[8]->SetOrbit(1.0f, 3.0f, glm::vec2(2.0f, 2.0f));
-    game_objects_[8]->SetScale(glm::vec2(0.5f, 0.5f));
-    game_objects_[8]->SetCollidable(false);
+    collectibles_.push_back(new CollectibleGameObject(glm::vec3(2.0f, 2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+    collectibles_[0]->SetScale(glm::vec2(0.5f, 0.5f));
+    collectibles_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+    collectibles_[1]->SetScale(glm::vec2(0.5f, 0.5f));
+    collectibles_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, 3.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+    collectibles_[2]->SetScale(glm::vec2(0.5f, 0.5f));
+    collectibles_.push_back(new CollectibleGameObject(glm::vec3(4.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+    collectibles_[3]->SetScale(glm::vec2(0.5f, 0.5f));
+    collectibles_.push_back(new CollectibleGameObject(glm::vec3(-1.0f, -3.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+    collectibles_[4]->SetScale(glm::vec2(0.5f, 0.5f));
+    collectibles_.push_back(new CollectibleGameObject(glm::vec3(3.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+    collectibles_[5]->SetScale(glm::vec2(0.5f, 0.5f));
 
     // Setup background
-    // In this specific implementation, the background is always the last object
     GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[4]);
     background->SetScale(glm::vec2(90.0f, 90.0f));
     background_objects_.push_back(background);
@@ -393,8 +386,7 @@ void Game::Update(double delta_time)
         game_objects_.back()->SetScale(glm::vec2(0.5f, 0.5f));
 	}
 
-    // Update all game objects
-
+    // Check for expired bullets
     for (int i = 0; i < bullets_.size(); i++) {
         BulletGameObject* current_game_object = bullets_[i];
         // Update the current game object
@@ -411,6 +403,26 @@ void Game::Update(double delta_time)
             }
         }
     }
+
+    // Check for expired collectibles
+    for (int i = 0; i < collectibles_.size(); i++) {
+        CollectibleGameObject* current_game_object = collectibles_[i];
+        // Update the current game object
+        current_game_object->Update(delta_time);
+
+        if (current_game_object->IsMarkedForDeletion()) {
+            // Find the object in the bullets vector
+            auto it = std::find(collectibles_.begin(), collectibles_.end(), current_game_object);
+
+            // If found, remove it
+            if (it != collectibles_.end()) {
+                delete* it; // Free memory if objects are dynamically allocated
+                collectibles_.erase(it);
+            }
+        }
+    }
+
+    // Update all game objects
 
     for (int i = 0; i < game_objects_.size(); i++) {
         // Get the current game object
@@ -463,23 +475,6 @@ void Game::Update(double delta_time)
                     break;
                 }
 
-                // Check if collision is with a collectible object
-                CollectibleGameObject* collectible = dynamic_cast<CollectibleGameObject*>(other_game_object);
-                PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
-                if (collectible && player) {
-					game_objects_[j]->MarkForDeletion();
-                    game_objects_[j]->SetCollidable(false);
-					std::cout << "Collected a collectible object!" << std::endl;
-                    PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(game_objects_[i]);
-                    if (player) {
-						player->objectsCollected_ += 1;
-                        score += 20;
-						std::cout << "Player has: " << player->objectsCollected_ << " collected objects!" << std::endl;
-					}
-                    break;
-                }
-
-
                 //Check for exceptions where collisions should be ignored
                 EnemyGameObject* curr_enemy = dynamic_cast<EnemyGameObject*>(current_game_object);
                 EnemyGameObject* other_enemy = dynamic_cast<EnemyGameObject*>(other_game_object);
@@ -523,9 +518,15 @@ void Game::Update(double delta_time)
             }
         }
 
+        // Check for collision with bullets
         for (int j = 0; j < (bullets_.size()); j++) {
             BulletGameObject* bullet = bullets_[j];
-            float distance = glm::length(current_game_object->GetPosition() - bullet->GetPosition());
+            glm::vec3 curr_pos = current_game_object->GetPosition();
+            curr_pos.z = 0.0f;
+            glm::vec3 other_pos = bullet->GetPosition();
+            other_pos.z = 0.0f;
+
+            float distance = glm::length(curr_pos - other_pos);
 
             EnemyGameObject* enemy = dynamic_cast<EnemyGameObject*>(current_game_object);
 
@@ -544,6 +545,33 @@ void Game::Update(double delta_time)
                 }
             }
 
+        }
+
+        // Check for collision with collectibles
+        for (int j = 0; j < collectibles_.size(); j++) {
+            CollectibleGameObject* collectible = collectibles_[j];
+            glm::vec3 curr_pos = current_game_object->GetPosition();
+            curr_pos.z = 0.0f;
+            glm::vec3 other_pos = collectible->GetPosition();
+            other_pos.z = 0.0f;
+            
+			float distance = glm::length(curr_pos - other_pos);
+
+			PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
+
+            if (player) {
+				// If distance is below a threshold, we have a collision
+                if (distance < 0.6f) {
+					// Check if collision is with a collidable object
+                    if (!(collectible->IsCollidable())) {
+						break;
+					}
+                    std::cout << "Collectible collected!" << std::endl;
+                    collectible->MarkForDeletion();
+                    collectible->SetCollidable(false);
+                    player->objectsCollected_++;
+				}
+			}   
         }
        
     }
@@ -594,6 +622,10 @@ void Game::Render(void){
     for (int i = 1; i < game_objects_.size(); i++) {
         game_objects_[i]->Render(view_matrix, current_time_);
     }
+    // Render collectible objects
+    for (int i = 0; i < collectibles_.size(); i++) {
+		collectibles_[i]->Render(view_matrix, current_time_);
+	}
     // Render background objects
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);

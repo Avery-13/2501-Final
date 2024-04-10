@@ -15,6 +15,7 @@
 #include "hud.h"
 #include "player_game_object.h"
 #include "bullet_game_object.h"
+#include "collectible_game_object.h"
 #include "particle_system.h"
 
 namespace game {
@@ -89,6 +90,9 @@ namespace game {
 
             // list for bullets
             std::vector<BulletGameObject*> bullets_;
+
+            // List of collectible objects
+            std::vector<CollectibleGameObject*> collectibles_;
 
             // Explosion object
             GameObject* explosion_;
