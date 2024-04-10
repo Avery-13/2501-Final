@@ -327,7 +327,7 @@ void Game::HandleControls(double delta_time)
         glm::vec3 direction = glm::vec3(xpos - width/2, ypos - height/2, 0.0f);
         float bulletAngle = atan2((-1)*direction.y, direction.x);
         direction = CalculateDirectionVector(bulletAngle);
-        SpawnBullet(player->GetPosition(), direction);
+        SpawnBullet(player->GetPosition(), direction, tex_[9], 7.0f, true);
     }
 }
 
@@ -494,6 +494,9 @@ void Game::Update(double delta_time)
                     player->takeDamage();
                     std::cout << "Player took damage! " << std::endl << "Current HP: " << player->hp_ << std::endl;
 
+                    player->isInvincible_ = true;
+                    player->invincibilityTimer_.Start(1.5f);
+
                     if (player->hp_ <= 0) {
                         //Add explosion
                         explosions_.push_back(new ExplosionGameObject(player->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
@@ -529,8 +532,10 @@ void Game::Update(double delta_time)
             float distance = glm::length(curr_pos - other_pos);
 
             EnemyGameObject* enemy = dynamic_cast<EnemyGameObject*>(current_game_object);
+            PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
 
-            if (enemy) {
+            //if its friendly bullet collididng with enemy
+            if (enemy && bullet->isFriendly) {
                 // If distance is below a threshold, we have a collision
                 if (distance < 0.6f) {
                     // Check if collision is with a collidable object
@@ -541,6 +546,27 @@ void Game::Update(double delta_time)
                     std::cout << "Explosion Started" << std::endl;
                     explosions_.push_back(new ExplosionGameObject(enemy->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
                     game_objects_.erase(game_objects_.begin() + i);
+
+                }
+            //if its enemy bullet colliding with player
+            }else if (player && !bullet->isFriendly && !player->isInvincible_) {
+                // If distance is below a threshold, we have a collision
+                if (distance < 0.6f) {
+                    
+                    player->takeDamage();
+                    std::cout << "Player took damage! " << std::endl << "Current HP: " << player->hp_ << std::endl;
+
+                    player->isInvincible_ = true;
+                    player->invincibilityTimer_.Start(1.5f);
+
+
+                    if (player->hp_ <= 0) {
+                        //Add explosion
+                        explosions_.push_back(new ExplosionGameObject(player->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
+                        std::cout << "Player has died!" << std::endl;
+                        glfwSetWindowShouldClose(window_, true);
+                        continue;
+                    }
 
                 }
             }
@@ -639,17 +665,18 @@ void Game::Render(void){
 
 }
 
-void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction) {
+void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction, GLuint texture, float speed, bool isFriendlyProjectile) {
 
     double currentTime = glfwGetTime();
     position.z = 0.0f;
 
     if (currentTime - lastShotTime_ >= shotCooldown_) {
-        GLuint bulletTexture = tex_[9]; 
-        float speed = 7.0f;
-        BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, speed);
+        GLuint bulletTexture = texture; 
+        float bulletSpeed = speed;
+        BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, bulletSpeed, isFriendlyProjectile);
         bullets_.push_back(bullet);
-        lastShotTime_ = currentTime;
+        if (isFriendlyProjectile) { lastShotTime_ = currentTime; }
+        
     }
 
 }

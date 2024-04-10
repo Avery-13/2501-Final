@@ -44,7 +44,7 @@ namespace game {
 
             float GetRotationAngleFromDirection(glm::vec3 direction);
 
-            void SpawnBullet(glm::vec3 position, glm::vec3 direction);
+            void SpawnBullet(glm::vec3 position, glm::vec3 direction, GLuint texture, float speed, bool isFriendlyProjectile);
 
             void AddBullet(BulletGameObject* bullet);
 
