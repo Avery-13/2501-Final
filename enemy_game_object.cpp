@@ -27,9 +27,15 @@ namespace game {
 			float x = start_pos_.x + radius * cos(t);
 			float y = start_pos_.y + radius * sin(t);
 
-			float rotation = GameObject::GetRotation();
-			GameObject::SetRotation(rotation + delta_time);
+			// Calculate the tangent angle. The derivative of the position (x, y) with respect to t
+			float vx = -radius * sin(t); // derivative of cos is -sin
+			float vy = radius * cos(t);  // derivative of sin is cos
 
+			// This angle will be tangent to the circle at the current position.
+			float tangentAngle = atan2(vy, vx);
+
+			// Set the enemy's rotation to face in the direction of the tangent
+			GameObject::SetRotation(tangentAngle);
 			GameObject::SetPosition(glm::vec3(x, y, 0.0f));
 		}
 		if (state_ == INTERCEPTING_ && !IsDisabled()) {

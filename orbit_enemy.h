@@ -18,6 +18,7 @@ namespace game {
         float orbitRadius_; // The radius of the orbit
         float orbitSpeed_; // The speed at which the object orbits
         float orbitAngle_; // Current angle of the orbiting object
+        float orbitObjectRotationSpeed_;
 
         Game* game_;
 

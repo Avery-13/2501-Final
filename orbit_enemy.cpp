@@ -1,4 +1,7 @@
 #include "orbit_enemy.h"
+#define GLM_FORCE_RADIANS
+#define GLEW_STATIC
+#include <glm/gtc/matrix_transform.hpp> 
 
 namespace game {
 
@@ -7,11 +10,12 @@ namespace game {
         : EnemyGameObject(position, geom, shader, texture),
         orbitObject_(orbitObject),
         orbitRadius_(1.5f), // Set the initial orbit radius
-        orbitSpeed_(4.0f), // Set the initial orbit speed
+        orbitSpeed_(7.0f), // Set the initial orbit speed
         orbitAngle_(0.0f) // Start with an initial angle of 0
         
     {
         game_ = game;
+        orbitObjectRotationSpeed_ = 3.0f * glm::pi<float>();
         // You might want to initialize the orbiting object's position here
     }
 
@@ -33,6 +37,13 @@ namespace game {
 
         // Update the orbiting object's position
         orbitObject_->SetPosition(glm::vec3(newX, newY, position_.z));
+
+        // Update the rotation of the orbiting object
+        float rotationAngle = orbitObject_->GetRotation();
+        rotationAngle -= orbitObjectRotationSpeed_ * delta_time; // Increment the angle
+
+        // Set the new rotation of the orbiting object
+        orbitObject_->SetRotation(rotationAngle);
     }
 
 } // namespace game

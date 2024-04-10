@@ -126,6 +126,7 @@ namespace game {
 
             // Timer for spawning enemies
             Timer enemy_timer_;
+            bool alternateEnemy = false;
 
             // Timer for spawning collectibles
             Timer collectible_timer_;

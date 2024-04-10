@@ -154,12 +154,7 @@ void Game::Setup(void)
 
 
     // Setup enemy objects
-    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[3]));
-    game_objects_[1]->SetRotation(pi_over_two);
-    game_objects_[1]->SetDisabled(true);
-
-    game_objects_.push_back(new OrbitEnemy(this, glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[11], game_objects_[1]));
-    game_objects_[2]->SetRotation(pi_over_two);
+    SpawnOrbitEnemy(glm::vec3(-5.0f, 1.0f, 0.0f));
 
 
     // Setup collectible objects
@@ -436,8 +431,16 @@ void Game::Update(double delta_time)
 
         // Spawn new enemy
         std::cout << "New enemy at: " << rand_x << " " << rand_y << std::endl;
-		game_objects_.push_back(new EnemyGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[3]));
-        game_objects_.back()->SetRotation(pi_over_two);
+        if (alternateEnemy) {
+		    game_objects_.push_back(new EnemyGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[3]));
+            game_objects_.back()->SetRotation(pi_over_two);
+        }
+        else {
+            game_objects_.push_back(new ProjectileShootingEnemy(this, glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[12]));
+        }
+
+        alternateEnemy = !alternateEnemy;
+
 	}
 
     if (!collectible_timer_.Running()) {
@@ -867,6 +870,7 @@ void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction, GLuint texture, 
         BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, bulletSpeed, isFriendlyProjectile);
         bullets_.push_back(bullet);
         if (isFriendlyProjectile) { lastShotTime_ = currentTime; }
+        if (!isFriendlyProjectile) { bullets_.back()->SetScale(glm::vec2(0.4f, 0.4f)); }
         
     }
 
@@ -874,15 +878,16 @@ void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction, GLuint texture, 
 
 void Game::SpawnOrbitEnemy(const glm::vec3& location) {
     // Create a standard EnemyGameObject that will orbit around the OrbitEnemy
-    EnemyGameObject* orbitingObject = new EnemyGameObject(location, sprite_, &sprite_shader_, tex_[3]);
+    EnemyGameObject* orbitingObject = new EnemyGameObject(location, sprite_, &sprite_shader_, tex_[18]);
     orbitingObject->SetDisabled(true); // Disable its independent behavior
     orbitingObject->SetRotation(pi_over_two);
 
     // Add the orbiting object to the game's collection of game objects
     game_objects_.push_back(orbitingObject);
+    game_objects_.back()->SetScale(glm::vec2(0.7f, 0.7f));
 
     // Create the OrbitEnemy that will handle the orbiting
-    OrbitEnemy* orbitEnemy = new OrbitEnemy(this, location, sprite_, &sprite_shader_, tex_[3], orbitingObject);
+    OrbitEnemy* orbitEnemy = new OrbitEnemy(this, location, sprite_, &sprite_shader_, tex_[11], orbitingObject);
 
     // Add the OrbitEnemy to the game's collection of game objects
     game_objects_.push_back(orbitEnemy);

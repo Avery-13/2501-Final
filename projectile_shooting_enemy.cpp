@@ -17,7 +17,7 @@ namespace game {
 
         const std::string resources_directory_g = RESOURCES_DIRECTORY;
 
-        LoadTexture(bulletTex, (resources_directory_g + "/textures/orb.png").c_str());
+        LoadTexture(bulletTex, (resources_directory_g + "/textures/acorn.png").c_str());
     }
 
     void ProjectileShootingEnemy::Update(double delta_time) {
@@ -41,7 +41,7 @@ namespace game {
         glm::vec3 direction = glm::normalize(player_pos_ - this->GetPosition());
         glm::vec3 bulletStartPosition = this->GetPosition() + direction;
 
-        game_->SpawnBullet(bulletStartPosition, this->GetBearing(), bulletTex, 4.0f, false);
+        game_->SpawnBullet(bulletStartPosition, this->GetBearing(), bulletTex, 3.0f, false);
     }
 
     void ProjectileShootingEnemy::LoadTexture(GLuint& texture, const char* filepath) {
