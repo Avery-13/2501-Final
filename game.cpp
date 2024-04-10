@@ -8,7 +8,7 @@
 #include <ctime>
 
 #include <path_config.h>
-
+#include "game.h"
 #include "sprite.h"
 #include "particles.h"
 #include "sparkle_particles.h"
@@ -19,7 +19,6 @@
 #include "potion_collectible_game_object.h"
 #include "disc_collectible_game_object.h"
 #include "enemy_game_object.h"
-#include "game.h"
 #include "timer.h"
 #include "projectile_shooting_enemy.h"
 #include "orbit_enemy.h"
@@ -196,6 +195,7 @@ void Game::Setup(void)
         float y = (rand() % 41) - 30.0f; // Random y value between -30 and 30
         float z = -1.0f; // Fixed z value
 
+        SpawnOrbitEnemy(glm::vec3(x, y, z));
         discs_.push_back(new DiscCollectibleGameObject(glm::vec3(x, y, z), sprite_, &sprite_shader_, tex_[13 + i]));
         discs_[i]->SetScale(glm::vec2(0.7f, 0.7f));
 
@@ -870,6 +870,22 @@ void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction, GLuint texture, 
         
     }
 
+}
+
+void Game::SpawnOrbitEnemy(const glm::vec3& location) {
+    // Create a standard EnemyGameObject that will orbit around the OrbitEnemy
+    EnemyGameObject* orbitingObject = new EnemyGameObject(location, sprite_, &sprite_shader_, tex_[3]);
+    orbitingObject->SetDisabled(true); // Disable its independent behavior
+    orbitingObject->SetRotation(pi_over_two);
+
+    // Add the orbiting object to the game's collection of game objects
+    game_objects_.push_back(orbitingObject);
+
+    // Create the OrbitEnemy that will handle the orbiting
+    OrbitEnemy* orbitEnemy = new OrbitEnemy(this, location, sprite_, &sprite_shader_, tex_[3], orbitingObject);
+
+    // Add the OrbitEnemy to the game's collection of game objects
+    game_objects_.push_back(orbitEnemy);
 }
 
 void Game::AddBullet(BulletGameObject* bullet) {

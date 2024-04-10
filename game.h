@@ -51,6 +51,8 @@ namespace game {
 
             void AddBullet(BulletGameObject* bullet);
 
+            void SpawnOrbitEnemy(const glm::vec3& location);
+
         private:
             // Main window: pointer to the GLFW window structure
             GLFWwindow *window_;
