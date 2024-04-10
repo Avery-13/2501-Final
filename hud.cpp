@@ -29,6 +29,7 @@ namespace game {
         LoadTexture(emptyHeartTexture, (hudTexturePath + "emptyHeart.png").c_str());
         LoadTexture(boneTexture, (hudTexturePath + "bone.png").c_str());
         LoadTexture(emptyBoneTexture, (hudTexturePath + "bone_empty.png").c_str());
+        LoadTexture(discTexture, (hudTexturePath + "disc.png").c_str());
 
 
         // Position HUD elements at the top-left corner of the screen
@@ -47,6 +48,21 @@ namespace game {
             digitPosition.x += 0.3f; // Move position for the next digit
         }
 
+        // Initialize the disc symbol and label
+        // Disc symbol
+        glm::vec3 discPosition(-3.3f, 1.8f, 0.0f); // Position on the HUD for the disc
+        GameObject* discGO = new GameObject(discPosition, sprite_, shader_, discTexture);
+        discGO->SetScale(glm::vec2(0.7, 0.7)); // Set an appropriate scale for your HUD
+        disc_ = discGO;
+
+        discPosition.x += 0.7f; // Move position for the disc digit
+
+        // Disc score label
+        GameObject* discLabelGO = new GameObject(discPosition, sprite_, shader_, numberTextures[0]);
+        discLabelGO->SetScale(glm::vec2(0.4, 0.4)); // Set an appropriate scale for your HUD
+        discScore_ = discLabelGO;
+
+
         // Initialize the heart health indicators
         glm::vec3 heartPosition(-3.3f, -2.4f, 0.0f); // Position on the HUD for the first heart
         for (int i = 0; i < 3; ++i) { 
@@ -58,11 +74,11 @@ namespace game {
         }
 
         // Initialize the bone collectibles
-        glm::vec3 bonePosition(1.8f, -2.4f, 0.0f); // Position on the HUD for the first bone
+        glm::vec3 bonePosition(1.6f, -2.4f, 0.0f); // Position on the HUD for the first bone
         for (int i = 0; i < 3; ++i) { 
             
             GameObject* boneGO = new GameObject(bonePosition, sprite_, shader_, emptyBoneTexture);
-            boneGO->SetScale(glm::vec2(0.6, 0.6)); // Set an appropriate scale for your HUD
+            boneGO->SetScale(glm::vec2(0.8, 0.8)); // Set an appropriate scale for your HUD
             bones.push_back(boneGO);
             bonePosition.x += 0.8f; // Move position for the next bone
         }
@@ -189,6 +205,10 @@ namespace game {
         xSymbol_->Render(viewMatrix, currentTime);
         ySymbol_->Render(viewMatrix, currentTime);
 
+        // Render the disc symbol and score
+        disc_->Render(viewMatrix, currentTime);
+        discScore_->Render(viewMatrix, currentTime);
+
         // Render the negative symbols iff the player is in the negative coordinates
         if (coordinates_.x < 0) {
 			xMinusSymbol_->Render(viewMatrix, currentTime);
@@ -205,7 +225,7 @@ namespace game {
         }
     }
 
-    void HUD::Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates) {
+    void HUD::Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates, int numDiscs) {
         score_ = score;
         health_ = health;
         collectibles_ = collectibles;
@@ -270,6 +290,9 @@ namespace game {
                 coordinateDigits_[i]->SetTexture(numberTextures[digitValue]);
 			}
 		}
+
+        // Update the disc score
+        discScore_->SetTexture(numberTextures[numDiscs]);
 
         // Manage the invincibility timer
         if (isInvincible) {

@@ -19,6 +19,7 @@
 #include "disc_collectible_game_object.h"
 #include "potion_collectible_game_object.h"
 #include "particle_system.h"
+#include "sparkle_particle_system.h"
 
 namespace game {
 
@@ -65,6 +66,9 @@ namespace game {
 
             // Particle geometry
             Geometry *particles_;
+
+            // Sparkle particle geometry
+            Geometry *sparkle_particles_;
 
             // Shader for rendering sprites in the scene
             Shader sprite_shader_;
@@ -114,9 +118,6 @@ namespace game {
 
             // Grass Particle System
             ParticleSystem* grass_particle_system_;
-
-            // Sparkle Particle System
-            ParticleSystem* sparkle_particle_system_;
 
             // Keep track of time
             double current_time_;

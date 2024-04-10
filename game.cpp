@@ -4,11 +4,14 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <SOIL/SOIL.h>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 #include <path_config.h>
 
 #include "sprite.h"
 #include "particles.h"
+#include "sparkle_particles.h"
 #include "tile.h"
 #include "shader.h"
 #include "player_game_object.h"
@@ -87,6 +90,10 @@ void Game::Init(void)
     // Initialize particle geometry
     particles_ = new Particles();
     particles_->CreateGeometry();
+
+    // Initialize sparkle particle geometry
+    sparkle_particles_ = new SparkleParticles();
+    sparkle_particles_->CreateGeometry();
 
     // Initialize sprite shader
     sprite_shader_.Init((resources_directory_g+std::string("/sprite_vertex_shader.glsl")).c_str(), (resources_directory_g+std::string("/sprite_fragment_shader.glsl")).c_str());
@@ -179,13 +186,39 @@ void Game::Setup(void)
     potions_.push_back(new PotionCollectibleGameObject(glm::vec3(-4.0f, -3.0f, 0.0f), sprite_, &sprite_shader_, tex_[17]));
     potions_[2]->SetScale(glm::vec2(0.6f, 0.6f));
 
+    // Randomize positions for discs
+    srand(time(NULL));
+
     // Discs
-    discs_.push_back(new DiscCollectibleGameObject(glm::vec3(10.0f, -14.0f, 0.0f), sprite_, &sprite_shader_, tex_[13]));
-    discs_[0]->SetScale(glm::vec2(0.7f, 0.7f));
-    discs_.push_back(new DiscCollectibleGameObject(glm::vec3(-15.0f, -9.0f, 0.0f), sprite_, &sprite_shader_, tex_[14]));
-    discs_[1]->SetScale(glm::vec2(0.7f, 0.7f));
-    discs_.push_back(new DiscCollectibleGameObject(glm::vec3(-19.0f, 24.0f, 0.0f), sprite_, &sprite_shader_, tex_[15]));
-    discs_[2]->SetScale(glm::vec2(0.7f, 0.7f));
+    for (int i = 0; i < 3; ++i) {
+        float x = (rand() % 41) - 30.0f; // Random x value between -30 and 30
+        float y = (rand() % 41) - 30.0f; // Random y value between -30 and 30
+        float z = -1.0f; // Fixed z value
+
+        discs_.push_back(new DiscCollectibleGameObject(glm::vec3(x, y, z), sprite_, &sprite_shader_, tex_[13 + i]));
+        discs_[i]->SetScale(glm::vec2(0.7f, 0.7f));
+
+        std::cout << "Disc " << i << " at: " << x << " " << y << std::endl;
+    }
+
+    // Disc particle effects
+    GameObject* disc_particles = new SparkleParticleSystem(glm::vec3(0.0f, 0.0f, 0.0f), sparkle_particles_, &sparkle_particle_shader_, tex_[8], discs_[0]);
+    disc_particles->SetScale(glm::vec2(0.1f, 0.1f));
+    disc_particles->SetRotation(-pi_over_two);
+    disc_particles->SetCollidable(false);
+    discs_[0]->sparkles_ = disc_particles; // Add pointer to the particle system to the disc object
+
+    disc_particles = new SparkleParticleSystem(glm::vec3(0.0f, 0.0f, 0.0f), sparkle_particles_, &sparkle_particle_shader_, tex_[8], discs_[1]);
+    disc_particles->SetScale(glm::vec2(0.1f, 0.1f));
+    disc_particles->SetRotation(-pi_over_two);
+    disc_particles->SetCollidable(false);
+    discs_[1]->sparkles_ = disc_particles; // Add pointer to the particle system to the disc object
+
+    disc_particles = new SparkleParticleSystem(glm::vec3(0.0f, 0.0f, 0.0f), sparkle_particles_, &sparkle_particle_shader_, tex_[8], discs_[2]);
+    disc_particles->SetScale(glm::vec2(0.1f, 0.1f));
+    disc_particles->SetRotation(-pi_over_two);
+    disc_particles->SetCollidable(false);
+    discs_[2]->sparkles_ = disc_particles; // Add pointer to the particle system to the disc object
 
     // Setup background
     GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[4]);
@@ -285,7 +318,7 @@ void Game::MainLoop(void)
         Update(delta_time);
 
         // Update the HUD with new information
-        hud_->Update(score, player_->hp_, player_->objectsCollected_, player_->isInvincible_, player_->invincibilityTimer_.TimeLeft(), glm::vec2(player_->GetPosition().x, player_->GetPosition().y));
+        hud_->Update(score, player_->hp_, player_->objectsCollected_, player_->isInvincible_, player_->invincibilityTimer_.TimeLeft(), glm::vec2(player_->GetPosition().x, player_->GetPosition().y), player_->goalObjectsCollected_);
 
 
         // Render all the game objects
@@ -392,13 +425,13 @@ void Game::Update(double delta_time)
     // Update time
     current_time_ += delta_time;
     if (!enemy_timer_.Running()) {
-        enemy_timer_.Start(5.0f);
+        enemy_timer_.Start(3.0f);
     }
 
     if (enemy_timer_.Finished()) {
         // Generate random coordinates to spawn a new enemy
-        int rand_x = rand() % 15 - 2;
-        int rand_y = rand() % 15 - 2;
+        int rand_x = rand() % 25 - 2;
+        int rand_y = rand() % 25 - 2;
 
         // Spawn new enemy
         std::cout << "New enemy at: " << rand_x << " " << rand_y << std::endl;
@@ -412,20 +445,20 @@ void Game::Update(double delta_time)
 
     if (collectible_timer_.Finished()) {
         // Generate random coordinates to spawn a new bone collectible
-        int rand_x = rand() % 15 - 2;
-        int rand_y = rand() % 15 - 2;
+        int rand_x = rand() % 35 - 2;
+        int rand_y = rand() % 35 - 2;
 
         // Spawn new collectible
-        std::cout << "New bone at: " << rand_x << " " << rand_y << std::endl;
+        //std::cout << "New bone at: " << rand_x << " " << rand_y << std::endl;
         collectibles_.push_back(new CollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[7]));
         collectibles_.back()->SetScale(glm::vec2(0.5f, 0.5f));
 
         // Generate random coordinates to spawn a new potion collectible
-        rand_x = rand() % 15 - 2;
-        rand_y = rand() % 15 - 2;
+        rand_x = rand() % 35 - 2;
+        rand_y = rand() % 35 - 2;
 
         // Spawn new collectible
-        std::cout << "New potion at: " << rand_x << " " << rand_y << std::endl;
+        //std::cout << "New potion at: " << rand_x << " " << rand_y << std::endl;
         potions_.push_back(new PotionCollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[17]));
         potions_.back()->SetScale(glm::vec2(0.6f, 0.6f));
     }
@@ -473,7 +506,7 @@ void Game::Update(double delta_time)
 		current_game_object->Update(delta_time);
 
 		if (current_game_object->IsMarkedForDeletion()) {
-			// Find the object in the bullets vector
+			// Find the object in the potions vector
 			auto it = std::find(potions_.begin(), potions_.end(), current_game_object);
 
 			// If found, remove it
@@ -491,11 +524,12 @@ void Game::Update(double delta_time)
 		current_game_object->Update(delta_time);
 
 		if (current_game_object->IsMarkedForDeletion()) {
-			// Find the object in the bullets vector
+			// Find the object in the discs vector
 			auto it = std::find(discs_.begin(), discs_.end(), current_game_object);
 
 			// If found, remove it
 			if (it != discs_.end()) {
+                delete discs_[i]->sparkles_; // Delete the associated particle system
 				delete* it; // Free memory if objects are dynamically allocated
 				discs_.erase(it);
 			}
@@ -735,6 +769,10 @@ void Game::Update(double delta_time)
 					disc->SetCollidable(false);
 					player->goalObjectsCollected_++;
                     std::cout << "Goal objects collected: " << player->goalObjectsCollected_ << std::endl;
+                    if(player->goalObjectsCollected_ == 3){
+						std::cout << "Player has won!" << std::endl;
+						glfwSetWindowShouldClose(window_, true);
+					}
 				}
 			}
         }
@@ -795,16 +833,21 @@ void Game::Render(void){
     for (int i = 0; i < potions_.size(); i++) {
         potions_[i]->Render(view_matrix, current_time_);
     }
-    // Render disc collectible objects
-    for (int i = 0; i < discs_.size(); i++) {
-		discs_[i]->Render(view_matrix, current_time_);
-    }
     // Render background objects
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);
 	}
     // Render grass particle system
 	grass_particle_system_->Render(view_matrix, current_time_);
+
+    // Render sparkle particle systems
+    for (int i = 0; i < discs_.size(); i++) {
+		discs_[i]->sparkles_->Render(view_matrix, current_time_);
+	}
+    // Render disc collectible objects
+    for (int i = 0; i < discs_.size(); i++) {
+        discs_[i]->Render(view_matrix, current_time_);
+    }
 
     // Render player object
     game_objects_[0]->Render(view_matrix, current_time_);

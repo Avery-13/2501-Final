@@ -55,8 +55,8 @@ void SparkleParticles::CreateGeometry(void)
         if (i % 4 == 0){
             // Get three random values
             //theta = (two_pi*(rand() % 1000) / 1000.0f);
-            theta = (200.0*(rand() % 10000) / 10000.0f -1.0f)*0.33f + pi;
-            r = 0.0f + 0.6*(rand() % 10000) / 10000.0f;
+            theta = (400.0*(rand() % 10000) / 10000.0f -1.0f)*0.33f + pi;
+            r = 0.0f + 2.5*(rand() % 10000) / 10000.0f;
             tmod = (rand() % 10000) / 10000.0f;
             angle = static_cast<float>(rand()) / RAND_MAX * two_pi; // Generate random angle
         }

@@ -16,6 +16,7 @@ PlayerGameObject::PlayerGameObject(const glm::vec3 &position, Geometry *geom, Sh
 { 
 	hp_ = 3; 
 	objectsCollected_ = 0;
+	goalObjectsCollected_ = 0;
 	isInvincible_ = false;
 	velocity_ = glm::vec3(0, 0, 0);
 	animationSpeed_ = 0.0f;

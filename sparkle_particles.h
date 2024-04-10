@@ -3,7 +3,7 @@
 
 #include "geometry.h"
 
-#define NUM_SPARKLES 20
+#define NUM_SPARKLES 150
 
 namespace game {
 

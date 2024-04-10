@@ -16,7 +16,7 @@ namespace game {
         HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix, Shader* heart_shader);
         ~HUD();
 
-        void Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates);
+        void Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates, int numDiscs);
         void Render(glm::mat4 hudProjection, double currentTime);
 
     private:
@@ -26,6 +26,9 @@ namespace game {
         std::vector<GameObject*> scoreDigits_; // HUD elements for the score digits
         std::vector<GameObject*> hearts; // HUD elements for the hearts
         std::vector<GameObject*> bones; // HUD elements for the bones
+        GameObject* discScore_; // HUD element for the num of discs collected
+        GameObject* disc_; // HUD element for the disc symbol
+
         std::vector<GameObject*> coordinateDigits_; // HUD elements for the coordinates
         GameObject* xSymbol_; // HUD element for the "x" symbol
         GameObject* ySymbol_; // HUD element for the "y" symbol
@@ -50,6 +53,7 @@ namespace game {
         GLuint emptyHeartTexture;
         GLuint boneTexture;
         GLuint emptyBoneTexture;
+        GLuint discTexture;
 
 
         void LoadTexture(GLuint& texture, const char* filepath);
