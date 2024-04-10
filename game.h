@@ -107,8 +107,11 @@ namespace game {
             // Keep track of time
             double current_time_;
 
-            // Timer for the game
-            Timer timer_;
+            // Timer for spawning enemies
+            Timer enemy_timer_;
+
+            // Timer for spawning collectibles
+            Timer collectible_timer_;
 
             // Current collided object (int index in vector)
             int curr_collided_object_;

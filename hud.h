@@ -41,9 +41,8 @@ namespace game {
         GLuint scoreLabelTexture;  // Texture for the "score" label
         GLuint heartTexture;
         GLuint emptyHeartTexture;
-        GLuint coinTexture;
-        GLuint emptyCoinTexture;
-        GLuint goldHeartTexture;;
+        GLuint boneTexture;
+        GLuint emptyBoneTexture;
 
 
         void LoadTexture(GLuint& texture, const char* filepath);

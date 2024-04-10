@@ -24,8 +24,8 @@ namespace game {
         LoadTexture(scoreLabelTexture, (hudTexturePath + "score.png").c_str());
         LoadTexture(heartTexture, (hudTexturePath + "heart.png").c_str());
         LoadTexture(emptyHeartTexture, (hudTexturePath + "emptyHeart.png").c_str());
-        LoadTexture(coinTexture, (hudTexturePath + "coin.png").c_str());
-        LoadTexture(emptyCoinTexture, (hudTexturePath + "coinOutline.png").c_str());
+        LoadTexture(boneTexture, (hudTexturePath + "bone.png").c_str());
+        LoadTexture(emptyBoneTexture, (hudTexturePath + "bone_empty.png").c_str());
 
 
         // Position HUD elements at the top-left corner of the screen
@@ -56,7 +56,7 @@ namespace game {
         glm::vec3 coinPosition(1.8f, -2.4f, 0.0f); // Position on the HUD for the first coin
         for (int i = 0; i < 3; ++i) { 
             
-            GameObject* coinGO = new GameObject(coinPosition, sprite_, shader_, emptyCoinTexture);
+            GameObject* coinGO = new GameObject(coinPosition, sprite_, shader_, emptyBoneTexture);
             coinGO->SetScale(glm::vec2(0.6, 0.6)); // Set an appropriate scale for your HUD
             coins.push_back(coinGO);
             coinPosition.x += 0.8f; // Move position for the next coin
@@ -172,10 +172,10 @@ namespace game {
 
         for (int i = 0; i < 3; ++i) {
             if (i < collectibles) {
-                coins[i]->SetTexture(coinTexture);
+                coins[i]->SetTexture(boneTexture);
             }
             else {
-                coins[i]->SetTexture(emptyCoinTexture);
+                coins[i]->SetTexture(emptyBoneTexture);
             }
         }
 

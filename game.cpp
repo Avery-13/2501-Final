@@ -220,8 +220,8 @@ void Game::SetAllTextures(void)
     // Load all textures that we will need
     // Declare all the textures here
     const char *texture[] = 
-        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/enemy_orange.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
-        "/textures/coin.png", "/textures/axe.png", "/textures/bullet.png", "/textures/grass_particle.png", "/textures/enemy_grey.png"};
+        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/squirrel.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
+        "/textures/bone.png", "/textures/axe.png", "/textures/bullet.png", "/textures/grass_particle.png", "/textures/enemy_grey.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references
@@ -362,11 +362,11 @@ void Game::Update(double delta_time)
 
     // Update time
     current_time_ += delta_time;
-    if (!timer_.Running()) {
-        timer_.Start(5.0f);
+    if (!enemy_timer_.Running()) {
+        enemy_timer_.Start(5.0f);
     }
 
-    if (timer_.Finished()) {
+    if (enemy_timer_.Finished()) {
         // Generate random coordinates to spawn a new enemy
         int rand_x = rand() % 15 - 2;
         int rand_y = rand() % 15 - 2;
@@ -375,16 +375,22 @@ void Game::Update(double delta_time)
         std::cout << "New enemy at: " << rand_x << " " << rand_y << std::endl;
 		game_objects_.push_back(new EnemyGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[3]));
         game_objects_.back()->SetRotation(pi_over_two);
+	}
 
+    if (!collectible_timer_.Running()) {
+        collectible_timer_.Start(15.0f);
+    }
+
+    if (collectible_timer_.Finished()) {
         // Generate random coordinates to spawn a new collectible
-        rand_x = rand() % 15 - 2;
-        rand_y = rand() % 15 - 2;
+        int rand_x = rand() % 15 - 2;
+        int rand_y = rand() % 15 - 2;
 
         // Spawn new collectible
         std::cout << "New collectible at: " << rand_x << " " << rand_y << std::endl;
-        game_objects_.push_back(new CollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[7]));
-        game_objects_.back()->SetScale(glm::vec2(0.5f, 0.5f));
-	}
+        collectibles_.push_back(new CollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[7]));
+        collectibles_.back()->SetScale(glm::vec2(0.5f, 0.5f));
+    }
 
     // Check for expired bullets
     for (int i = 0; i < bullets_.size(); i++) {
