@@ -2,7 +2,7 @@
 
 namespace game {
 
-    BombGameObject::BombGameObject(glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture, float blastRadius, float timeToExplode)
+    BombGameObject::BombGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, float blastRadius, float timeToExplode)
         : GameObject(position, geom, shader, texture), blastRadius_(blastRadius), timeToExplode_(timeToExplode), hasExploded_(false) {
         // Constructor implementation
     }

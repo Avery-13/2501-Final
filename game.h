@@ -20,6 +20,7 @@
 #include "potion_collectible_game_object.h"
 #include "particle_system.h"
 #include "sparkle_particle_system.h"
+#include "bomb_game_object.h"
 
 namespace game {
 
@@ -115,6 +116,9 @@ namespace game {
             // list of potions
             std::vector<PotionCollectibleGameObject*> potions_;
 
+            //list of bombs
+            std::vector<BombGameObject*> bombs_;
+
             // Explosion object
             GameObject* explosion_;
 
@@ -140,6 +144,9 @@ namespace game {
             float lastShotTime_; // Time since the last shot was fired
             const float shotCooldown_ = 1.0f; // Cooldown period in seconds
 
+            float lastBombTime_;
+            const float bombCooldown_ = 1.5f; // Cooldown period in seconds
+
             // Current amount of collected objects
             int collected_objects_;
 
@@ -160,6 +167,10 @@ namespace game {
  
             // Render the game world
             void Render(void);
+
+            void DropBombAtLocation(const glm::vec3& location);
+
+            void HandleBombExplosions();
 
 
 

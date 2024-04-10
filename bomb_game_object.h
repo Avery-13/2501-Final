@@ -7,7 +7,7 @@ namespace game {
 
     class BombGameObject : public GameObject {
     public:
-        BombGameObject(glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture, float blastRadius, float timeToExplode);
+        BombGameObject(const glm::vec3& position, Geometry* geom, Shader* shader, GLuint texture, float blastRadius, float timeToExplode);
         void Update(double delta_time) override;
         bool HasExploded() const;
         float GetBlastRadius() const;

@@ -386,6 +386,15 @@ void Game::HandleControls(double delta_time)
         direction = CalculateDirectionVector(bulletAngle);
         SpawnBullet(player->GetPosition(), direction, tex_[9], 7.0f, true);
     }
+    if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+
+        double currentTime = glfwGetTime();
+        if (currentTime - lastBombTime_ >= bombCooldown_) {
+            DropBombAtLocation(player->GetPosition());
+            lastBombTime_ = currentTime;
+        }
+
+    }
 }
 
 
@@ -541,6 +550,11 @@ void Game::Update(double delta_time)
 	}
 
     // Update all game objects
+
+    for (BombGameObject* bomb : bombs_) {
+        bomb->Update(delta_time);
+    }
+    HandleBombExplosions();
 
     for (int i = 0; i < game_objects_.size(); i++) {
         // Get the current game object
@@ -852,6 +866,10 @@ void Game::Render(void){
     for (int i = 0; i < discs_.size(); i++) {
         discs_[i]->Render(view_matrix, current_time_);
     }
+    //render bomb objects
+    for (BombGameObject* bomb : bombs_) {
+        bomb->Render(view_matrix, current_time_);
+    }
 
     // Render player object
     game_objects_[0]->Render(view_matrix, current_time_);
@@ -892,6 +910,55 @@ void Game::SpawnOrbitEnemy(const glm::vec3& location) {
     // Add the OrbitEnemy to the game's collection of game objects
     game_objects_.push_back(orbitEnemy);
 }
+
+void Game::DropBombAtLocation(const glm::vec3& location) {
+    float blastRadius = 2.0f; // Example blast radius
+    float timeToExplode = 3.0f; // Bomb will explode after 3 seconds
+    GLuint texture = tex_[16];
+
+    BombGameObject* bomb = new BombGameObject(location, sprite_, &sprite_shader_, texture, blastRadius, timeToExplode);
+    bombs_.push_back(bomb);
+}
+
+void Game::HandleBombExplosions() {
+    for (int i = 0; i < bombs_.size(); ++i) {
+        BombGameObject* bomb = bombs_[i];
+        if (bomb && bomb->HasExploded()) {
+            // Check for enemies within the blast radius and destroy them
+            glm::vec3 bombPosition = bomb->GetPosition();
+            float blastRadius = bomb->GetBlastRadius();
+
+            for (int j = 0; j < game_objects_.size();) {
+                EnemyGameObject* curr_enemy = dynamic_cast<EnemyGameObject*>(game_objects_[j]);
+
+                // Make sure curr_enemy is not nullptr before using it
+                if (curr_enemy && glm::distance(bombPosition, curr_enemy->GetPosition()) <= blastRadius) {
+                    // Enemy is within blast radius, destroy it
+                    explosions_.push_back(new ExplosionGameObject(curr_enemy->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
+                    score += 100;
+                    delete curr_enemy;
+                    game_objects_.erase(game_objects_.begin() + j);
+                }
+                else {
+                    ++j; // Only increment if we didn't erase
+                }
+            }
+
+            explosions_.push_back(new ExplosionGameObject(bomb->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
+            explosions_.back()->SetScale(glm::vec2(3.0f, 3.0f));
+            // Remove the bomb from the game
+            delete bomb;
+            bombs_[i] = nullptr;  // Avoid dangling pointer
+            bombs_.erase(bombs_.begin() + i);
+            --i; // Decrement index to account for the removed element
+        }
+    }
+    // Remove all nullptr entries after handling explosions
+    bombs_.erase(std::remove(bombs_.begin(), bombs_.end(), nullptr), bombs_.end());
+}
+
+
+
 
 void Game::AddBullet(BulletGameObject* bullet) {
     bullets_.push_back(bullet);
