@@ -70,6 +70,9 @@ namespace game {
             // Shader for rendering particles
             Shader particle_shader_;
 
+            // Shader for rendering sparkle particles
+            Shader sparkle_particle_shader_;
+
             // Shader for HUD
             Shader hud_shader_;
 
@@ -103,6 +106,9 @@ namespace game {
 
             // Grass Particle System
             ParticleSystem* grass_particle_system_;
+
+            // Sparkle Particle System
+            ParticleSystem* sparkle_particle_system_;
 
             // Keep track of time
             double current_time_;

@@ -98,6 +98,9 @@ void Game::Init(void)
     // Initialize particle shader
     particle_shader_.Init((resources_directory_g + std::string("/particle_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/particle_fragment_shader.glsl")).c_str());
 
+    // Initialize sparkle particle shader
+    sparkle_particle_shader_.Init((resources_directory_g + std::string("/sparkle_particle_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/sparkle_particle_fragment_shader.glsl")).c_str());
+
     // Initialize time
     current_time_ = 0.0;
 }
@@ -226,8 +229,9 @@ void Game::SetAllTextures(void)
     // Load all textures that we will need
     // Declare all the textures here
     const char *texture[] = 
-        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/squirrel.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
-        "/textures/bone.png", "/textures/axe.png", "/textures/bullet.png", "/textures/grass_particle.png", "/textures/enemy_grey.png"};
+        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/squirrel_brown.png", "/textures/grass03.png", "/textures/acorn.png", "/textures/explosion0.png",
+        "/textures/bone.png", "/textures/star_particle.png", "/textures/potion.png", "/textures/grass_particle.png", "/textures/squirrel_black.png", "/textures/squirrel_red.png", "/textures/disc_o.png", "/textures/disc_b.png" , "/textures/disc_p.png" 
+        "/textures/poop.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references
