@@ -25,6 +25,7 @@ namespace game {
             // Stats
             int hp_;
             int objectsCollected_;
+            int goalObjectsCollected_;
             bool isInvincible_;
             Timer invincibilityTimer_;
             float base_speed_ = 4.0f;

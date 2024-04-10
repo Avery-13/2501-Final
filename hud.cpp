@@ -8,7 +8,6 @@ namespace game {
     HUD::HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix, Shader* heart_shader)
         : shader_(shader), projectionMatrix_(projectionMatrix), score_(0), health_(0), collectibles_(0) {
 
-
         sprite_ = new Sprite();
         sprite_->CreateGeometry(); 
 
@@ -19,6 +18,10 @@ namespace game {
             LoadTexture(textureID, filename.c_str());
             numberTextures[i] = textureID; // Save the texture ID
         }
+        // Load symbol textures
+        LoadTexture(symbolTextures[0], (hudTexturePath + "x.png").c_str());
+        LoadTexture(symbolTextures[1], (hudTexturePath + "y.png").c_str());
+        LoadTexture(symbolTextures[2], (hudTexturePath + "-.png").c_str());
 
         // Load the score label texture
         LoadTexture(scoreLabelTexture, (hudTexturePath + "score.png").c_str());
@@ -34,7 +37,7 @@ namespace game {
         scoreLabelGO->SetScale(glm::vec2(1.8f, 0.6f));
         hudElements.push_back(scoreLabelGO);
 
-
+        // Initialize the score digits
         glm::vec3 digitPosition(-1.5f, 2.4f, 0.0f); // Position on the HUD for the first digit
         for (int i = 0; i < 4; ++i) { // Assuming a 4 digit score
             // Initialize each digit GameObject with the texture for '0'
@@ -44,6 +47,7 @@ namespace game {
             digitPosition.x += 0.3f; // Move position for the next digit
         }
 
+        // Initialize the heart health indicators
         glm::vec3 heartPosition(-3.3f, -2.4f, 0.0f); // Position on the HUD for the first heart
         for (int i = 0; i < 3; ++i) { 
             
@@ -53,23 +57,68 @@ namespace game {
             heartPosition.x += 0.8f; // Move position for the next heart
         }
 
-        glm::vec3 coinPosition(1.8f, -2.4f, 0.0f); // Position on the HUD for the first coin
+        // Initialize the bone collectibles
+        glm::vec3 bonePosition(1.8f, -2.4f, 0.0f); // Position on the HUD for the first bone
         for (int i = 0; i < 3; ++i) { 
             
-            GameObject* coinGO = new GameObject(coinPosition, sprite_, shader_, emptyBoneTexture);
-            coinGO->SetScale(glm::vec2(0.6, 0.6)); // Set an appropriate scale for your HUD
-            coins.push_back(coinGO);
-            coinPosition.x += 0.8f; // Move position for the next coin
+            GameObject* boneGO = new GameObject(bonePosition, sprite_, shader_, emptyBoneTexture);
+            boneGO->SetScale(glm::vec2(0.6, 0.6)); // Set an appropriate scale for your HUD
+            bones.push_back(boneGO);
+            bonePosition.x += 0.8f; // Move position for the next bone
         }
 
+        // Initialize the invincibility timer digits
         glm::vec3 timerDigitPosition(-3.3f, -1.8f, 0.0f); // Adjust position as needed
         for (int i = 0; i < 2; ++i) { 
             GameObject* digitGO = new GameObject(timerDigitPosition, sprite_, shader_, numberTextures[0]);
             digitGO->SetScale(glm::vec2(0.5, 0.5)); 
             invincibilityTimerDigits_.push_back(digitGO);
-            timerDigitPosition.x += 0.4f; 
+            timerDigitPosition.x += 0.3f; 
         }
 
+        // Initialize the coordinate digits
+        glm::vec3 coordinatesPosition(2.6f, 2.4f, 0.0f); // Adjust position as needed
+
+        // Init x symbol
+        GameObject* xGo = new GameObject(coordinatesPosition, sprite_, shader_, symbolTextures[0]);
+        xGo->SetScale(glm::vec2(0.3, 0.3));
+        xSymbol_ = xGo;
+        coordinatesPosition.x += 0.4f;
+        // Init x negative symbol
+        GameObject* xNegativeGo = new GameObject(coordinatesPosition, sprite_, shader_, symbolTextures[2]);
+        xNegativeGo->SetScale(glm::vec2(0.3, 0.3));
+        xMinusSymbol_ = xNegativeGo;
+        coordinatesPosition.x += 0.3f;
+        // Init x coordinate
+        for (int i = 0; i < 2; ++i) { 
+			GameObject* digitGO = new GameObject(coordinatesPosition, sprite_, shader_, numberTextures[0]);
+			digitGO->SetScale(glm::vec2(0.3, 0.3)); 
+            coordinateDigits_.push_back(digitGO);
+			coordinatesPosition.x += 0.3f; 
+		}
+
+        // Reset coordinates position
+        coordinatesPosition = glm::vec3(2.6f, 2.0f, 0.0f); // Match previous x coordinate position, lower y
+
+        // Init y symbol
+        GameObject* yGo = new GameObject(coordinatesPosition, sprite_, shader_, symbolTextures[1]);
+        yGo->SetScale(glm::vec2(0.3, 0.3));
+        ySymbol_ = yGo;
+        coordinatesPosition.x += 0.4f;
+        // Init y negative symbol
+        GameObject* yNegativeGo = new GameObject(coordinatesPosition, sprite_, shader_, symbolTextures[2]);
+        yNegativeGo->SetScale(glm::vec2(0.3, 0.3));
+        yMinusSymbol_ = yNegativeGo;
+        coordinatesPosition.x += 0.3f;
+        // Init y coordinate
+        for (int i = 0; i < 2; ++i) {
+            GameObject* digitGO = new GameObject(coordinatesPosition, sprite_, shader_, numberTextures[0]);
+            digitGO->SetScale(glm::vec2(0.3, 0.3));
+            coordinateDigits_.push_back(digitGO);
+            coordinatesPosition.x += 0.3f;
+        }
+
+        std::cout << "Coord Digits size: " << coordinateDigits_.size() << std::endl;
     }
 
     HUD::~HUD() {
@@ -82,7 +131,7 @@ namespace game {
         for (auto element : hearts) {
             delete element;
         }
-        for (auto element : coins) {
+        for (auto element : bones) {
             delete element;
         }
         for (auto element : invincibilityTimerDigits_) {
@@ -131,8 +180,21 @@ namespace game {
         for (auto element : hearts) {
             element->Render(viewMatrix, currentTime);
         }
-        for (auto element : coins) {
+        for (auto element : bones) {
             element->Render(viewMatrix, currentTime);
+        }
+        for (auto element : coordinateDigits_) {
+			element->Render(viewMatrix, currentTime);
+		}
+        xSymbol_->Render(viewMatrix, currentTime);
+        ySymbol_->Render(viewMatrix, currentTime);
+
+        // Render the negative symbols iff the player is in the negative coordinates
+        if (coordinates_.x < 0) {
+			xMinusSymbol_->Render(viewMatrix, currentTime);
+		}
+        if (coordinates_.y < 0) {
+            yMinusSymbol_->Render(viewMatrix, currentTime);
         }
 
         // Render the invincibility timer digits if the timer is running
@@ -143,15 +205,27 @@ namespace game {
         }
     }
 
-    void HUD::Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft) {
+    void HUD::Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates) {
         score_ = score;
         health_ = health;
         collectibles_ = collectibles;
+        coordinates_ = coordinates;
 
         std::string scoreStr = std::to_string(score);
         // Ensure the score string has exactly 4 characters, padding with zeros if necessary
         scoreStr = std::string(4 - scoreStr.length(), '0') + scoreStr;
 
+        // Convert the coordinates to positive integer strings
+        // The coordinates are stored as floats, so we need to convert them to integers first
+        int xCoord = static_cast<int>(coordinates.x);
+        int yCoord = static_cast<int>(coordinates.y);
+        std::string xCoordStr = std::to_string(abs(xCoord));
+        std::string yCoordStr = std::to_string(abs(yCoord));
+
+        // Ensure the coordinate strings have exactly 2 characters, padding with zeros if necessary
+        xCoordStr = std::string(2 - xCoordStr.length(), '0') + xCoordStr;
+        yCoordStr = std::string(2 - yCoordStr.length(), '0') + yCoordStr;
+        
         for (int i = 0; i < 3; ++i) {
             if (i < health) {
                 // Player still has this heart
@@ -172,10 +246,10 @@ namespace game {
 
         for (int i = 0; i < 3; ++i) {
             if (i < collectibles) {
-                coins[i]->SetTexture(boneTexture);
+                bones[i]->SetTexture(boneTexture);
             }
             else {
-                coins[i]->SetTexture(emptyBoneTexture);
+                bones[i]->SetTexture(emptyBoneTexture);
             }
         }
 
@@ -184,6 +258,18 @@ namespace game {
             int digitValue = scoreStr[i] - '0'; // Convert char to int
             scoreDigits_[i]->SetTexture(numberTextures[digitValue]);
         }
+
+        // Update the coordinates based on string size
+        for (size_t i = 0; i < coordinateDigits_.size(); ++i) {
+            if (i < 2) {
+				int digitValue = xCoordStr[i] - '0'; // Convert char to int
+				coordinateDigits_[i]->SetTexture(numberTextures[digitValue]);
+			}
+			else {
+                int digitValue = yCoordStr[i - 2] - '0'; // Convert char to int
+                coordinateDigits_[i]->SetTexture(numberTextures[digitValue]);
+			}
+		}
 
         // Manage the invincibility timer
         if (isInvincible) {

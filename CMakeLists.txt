@@ -24,6 +24,10 @@ set(HDRS
     particle_system.h
     projectile_shooting_enemy.h
     orbit_enemy.h
+    potion_collectible_game_object.h
+    disc_collectible_game_object.h
+    sparkle_particles.h
+    sparkle_particle_system.h
 )
  
 set(SRCS
@@ -52,6 +56,12 @@ set(SRCS
     particle_system.cpp
     projectile_shooting_enemy.cpp
     orbit_enemy.cpp
+    potion_collectible_game_object.cpp
+    disc_collectible_game_object.cpp
+    sparkle_particles.cpp
+    sparkle_particle_system.cpp
+    sparkle_particle_vertex_shader.glsl
+    sparkle_particle_fragment_shader.glsl
 )
 
 # Add path name to configuration file

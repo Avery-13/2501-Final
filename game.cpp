@@ -13,6 +13,8 @@
 #include "shader.h"
 #include "player_game_object.h"
 #include "collectible_game_object.h"
+#include "potion_collectible_game_object.h"
+#include "disc_collectible_game_object.h"
 #include "enemy_game_object.h"
 #include "game.h"
 #include "timer.h"
@@ -98,6 +100,9 @@ void Game::Init(void)
     // Initialize particle shader
     particle_shader_.Init((resources_directory_g + std::string("/particle_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/particle_fragment_shader.glsl")).c_str());
 
+    // Initialize sparkle particle shader
+    sparkle_particle_shader_.Init((resources_directory_g + std::string("/sparkle_particle_vertex_shader.glsl")).c_str(), (resources_directory_g + std::string("/sparkle_particle_fragment_shader.glsl")).c_str());
+
     // Initialize time
     current_time_ = 0.0;
 }
@@ -143,7 +148,7 @@ void Game::Setup(void)
 
 
     // Setup enemy objects
-    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[8]));
+    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[3]));
     game_objects_[1]->SetRotation(pi_over_two);
     game_objects_[1]->SetDisabled(true);
 
@@ -151,9 +156,9 @@ void Game::Setup(void)
     game_objects_[2]->SetRotation(pi_over_two);
 
 
-
-
     // Setup collectible objects
+    
+    // Bones
     collectibles_.push_back(new CollectibleGameObject(glm::vec3(2.0f, 2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     collectibles_[0]->SetScale(glm::vec2(0.5f, 0.5f));
     collectibles_.push_back(new CollectibleGameObject(glm::vec3(-2.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
@@ -166,6 +171,22 @@ void Game::Setup(void)
     collectibles_[4]->SetScale(glm::vec2(0.5f, 0.5f));
     collectibles_.push_back(new CollectibleGameObject(glm::vec3(3.0f, -2.0f, 0.0f), sprite_, &sprite_shader_, tex_[7]));
     collectibles_[5]->SetScale(glm::vec2(0.5f, 0.5f));
+
+    // Potions
+    potions_.push_back(new PotionCollectibleGameObject(glm::vec3(5.0f, 4.0f, 0.0f), sprite_, &sprite_shader_, tex_[17]));
+    potions_[0]->SetScale(glm::vec2(0.6f, 0.6f));
+    potions_.push_back(new PotionCollectibleGameObject(glm::vec3(-3.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[17]));
+    potions_[1]->SetScale(glm::vec2(0.6f, 0.6f));
+    potions_.push_back(new PotionCollectibleGameObject(glm::vec3(-4.0f, -3.0f, 0.0f), sprite_, &sprite_shader_, tex_[17]));
+    potions_[2]->SetScale(glm::vec2(0.6f, 0.6f));
+
+    // Discs
+    discs_.push_back(new DiscCollectibleGameObject(glm::vec3(10.0f, -14.0f, 0.0f), sprite_, &sprite_shader_, tex_[13]));
+    discs_[0]->SetScale(glm::vec2(0.7f, 0.7f));
+    discs_.push_back(new DiscCollectibleGameObject(glm::vec3(-15.0f, -9.0f, 0.0f), sprite_, &sprite_shader_, tex_[14]));
+    discs_[1]->SetScale(glm::vec2(0.7f, 0.7f));
+    discs_.push_back(new DiscCollectibleGameObject(glm::vec3(-19.0f, 24.0f, 0.0f), sprite_, &sprite_shader_, tex_[15]));
+    discs_[2]->SetScale(glm::vec2(0.7f, 0.7f));
 
     // Setup background
     GameObject *background = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), tile_, &sprite_shader_, tex_[4]);
@@ -227,8 +248,9 @@ void Game::SetAllTextures(void)
     // Load all textures that we will need
     // Declare all the textures here
     const char *texture[] = 
-        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/squirrel.png", "/textures/grass03.png", "/textures/orb.png", "/textures/explosion0.png",
-        "/textures/bone.png", "/textures/axe.png", "/textures/bullet.png", "/textures/grass_particle.png", "/textures/enemy_grey.png"};
+        {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/squirrel_brown.png", "/textures/grass03.png", "/textures/acorn.png", "/textures/explosion0.png",
+        "/textures/bone.png", "/textures/star_particle.png", "/textures/bullet.png", "/textures/grass_particle.png", "/textures/squirrel_black.png", "/textures/squirrel_red.png", "/textures/disc_o.png", "/textures/disc_b.png" , "/textures/disc_p.png", 
+        "/textures/poop.png", "/textures/potion.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references
@@ -264,7 +286,7 @@ void Game::MainLoop(void)
         Update(delta_time);
 
         // Update the HUD with new information
-        hud_->Update(score, player_->hp_, player_->objectsCollected_, player_->isInvincible_, player_->invincibilityTimer_.TimeLeft());
+        hud_->Update(score, player_->hp_, player_->objectsCollected_, player_->isInvincible_, player_->invincibilityTimer_.TimeLeft(), glm::vec2(player_->GetPosition().x, player_->GetPosition().y));
 
 
         // Render all the game objects
@@ -343,6 +365,7 @@ void Game::Update(double delta_time)
 {
     // Get player game object
     PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(game_objects_[0]);
+    //std::cout << "Player position: " << player->GetPosition().x << " " << player->GetPosition().y << std::endl;
 
 
     // Animate player
@@ -389,14 +412,23 @@ void Game::Update(double delta_time)
     }
 
     if (collectible_timer_.Finished()) {
-        // Generate random coordinates to spawn a new collectible
+        // Generate random coordinates to spawn a new bone collectible
         int rand_x = rand() % 15 - 2;
         int rand_y = rand() % 15 - 2;
 
         // Spawn new collectible
-        std::cout << "New collectible at: " << rand_x << " " << rand_y << std::endl;
+        std::cout << "New bone at: " << rand_x << " " << rand_y << std::endl;
         collectibles_.push_back(new CollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[7]));
         collectibles_.back()->SetScale(glm::vec2(0.5f, 0.5f));
+
+        // Generate random coordinates to spawn a new potion collectible
+        rand_x = rand() % 15 - 2;
+        rand_y = rand() % 15 - 2;
+
+        // Spawn new collectible
+        std::cout << "New potion at: " << rand_x << " " << rand_y << std::endl;
+        potions_.push_back(new PotionCollectibleGameObject(glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[17]));
+        potions_.back()->SetScale(glm::vec2(0.6f, 0.6f));
     }
 
     // Check for expired bullets
@@ -417,7 +449,7 @@ void Game::Update(double delta_time)
         }
     }
 
-    // Check for expired collectibles
+    // Check for expired bone collectibles
     for (int i = 0; i < collectibles_.size(); i++) {
         CollectibleGameObject* current_game_object = collectibles_[i];
         // Update the current game object
@@ -434,6 +466,42 @@ void Game::Update(double delta_time)
             }
         }
     }
+
+    // Check for expired potion collectibles
+    for (int i = 0; i < potions_.size(); i++) {
+		PotionCollectibleGameObject* current_game_object = potions_[i];
+		// Update the current game object
+		current_game_object->Update(delta_time);
+
+		if (current_game_object->IsMarkedForDeletion()) {
+			// Find the object in the bullets vector
+			auto it = std::find(potions_.begin(), potions_.end(), current_game_object);
+
+			// If found, remove it
+			if (it != potions_.end()) {
+				delete* it; // Free memory if objects are dynamically allocated
+				potions_.erase(it);
+			}
+		}
+	}
+
+    // Check for expired disc collectibles
+    for (int i = 0; i < discs_.size(); i++) {
+		DiscCollectibleGameObject* current_game_object = discs_[i];
+		// Update the current game object
+		current_game_object->Update(delta_time);
+
+		if (current_game_object->IsMarkedForDeletion()) {
+			// Find the object in the bullets vector
+			auto it = std::find(discs_.begin(), discs_.end(), current_game_object);
+
+			// If found, remove it
+			if (it != discs_.end()) {
+				delete* it; // Free memory if objects are dynamically allocated
+				discs_.erase(it);
+			}
+		}
+	}
 
     // Update all game objects
 
@@ -586,7 +654,7 @@ void Game::Update(double delta_time)
 
         }
 
-        // Check for collision with collectibles
+        // Check for collision with bone collectibles
         for (int j = 0; j < collectibles_.size(); j++) {
             CollectibleGameObject* collectible = collectibles_[j];
             glm::vec3 curr_pos = current_game_object->GetPosition();
@@ -611,6 +679,65 @@ void Game::Update(double delta_time)
                     player->objectsCollected_++;
 				}
 			}   
+        }
+
+        // Check for collision with potion collectibles
+        for (int j = 0; j < potions_.size(); j++) {
+			PotionCollectibleGameObject* potion = potions_[j];
+			glm::vec3 curr_pos = current_game_object->GetPosition();
+			curr_pos.z = 0.0f;
+			glm::vec3 other_pos = potion->GetPosition();
+			other_pos.z = 0.0f;
+
+			float distance = glm::length(curr_pos - other_pos);
+
+			PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
+
+			if (player) {
+				// If distance is below a threshold, we have a collision
+				if (distance < 0.6f) {
+					// Check if collision is with a collidable object
+					if (!(potion->IsCollidable())) {
+						break;
+					}
+					std::cout << "Potion collected!" << std::endl;
+					potion->MarkForDeletion();
+					potion->SetCollidable(false);
+
+                    // Check if player is at full health
+                    if (player->hp_ < 3) {
+                        player->hp_ ++;
+                    }
+				}
+			}
+		}
+
+        // Check for collision with disc collectibles
+        for (int j = 0; j < discs_.size(); j++) {
+            DiscCollectibleGameObject* disc = discs_[j];
+            glm::vec3 curr_pos = current_game_object->GetPosition();
+            curr_pos.z = 0.0f;
+            glm::vec3 other_pos = disc->GetPosition();
+            other_pos.z = 0.0f;
+
+            float distance = glm::length(curr_pos - other_pos);
+
+            PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
+
+            if (player) {
+				// If distance is below a threshold, we have a collision
+				if (distance < 0.6f) {
+					// Check if collision is with a collidable object
+					if (!(disc->IsCollidable())) {
+						break;
+					}
+					std::cout << "Disc collected!" << std::endl;
+					disc->MarkForDeletion();
+					disc->SetCollidable(false);
+					player->goalObjectsCollected_++;
+                    std::cout << "Goal objects collected: " << player->goalObjectsCollected_ << std::endl;
+				}
+			}
         }
        
     }
@@ -661,10 +788,18 @@ void Game::Render(void){
     for (int i = 1; i < game_objects_.size(); i++) {
         game_objects_[i]->Render(view_matrix, current_time_);
     }
-    // Render collectible objects
+    // Render bone collectible objects
     for (int i = 0; i < collectibles_.size(); i++) {
 		collectibles_[i]->Render(view_matrix, current_time_);
 	}
+    // Render potion collectible objects
+    for (int i = 0; i < potions_.size(); i++) {
+        potions_[i]->Render(view_matrix, current_time_);
+    }
+    // Render disc collectible objects
+    for (int i = 0; i < discs_.size(); i++) {
+		discs_[i]->Render(view_matrix, current_time_);
+    }
     // Render background objects
     for (int i = 0; i < background_objects_.size(); i++) {
 		background_objects_[i]->Render(view_matrix, current_time_);
