@@ -283,7 +283,7 @@ void Game::SetAllTextures(void)
     const char *texture[] = 
         {"/textures/player_frames/left_step.png", "/textures/player_frames/right_step.png", "/textures/player_frames/still.png", "/textures/squirrel_brown.png", "/textures/grass03.png", "/textures/acorn.png", "/textures/explosion0.png",
         "/textures/bone.png", "/textures/star_particle.png", "/textures/bullet.png", "/textures/grass_particle.png", "/textures/squirrel_black.png", "/textures/squirrel_red.png", "/textures/disc_o.png", "/textures/disc_b.png" , "/textures/disc_p.png", 
-        "/textures/poop.png", "/textures/potion.png"};
+        "/textures/poop.png", "/textures/potion.png", "/textures/blade.png"};
     // Get number of declared textures
     int num_textures = sizeof(texture) / sizeof(char *);
     // Allocate a buffer for all texture references
