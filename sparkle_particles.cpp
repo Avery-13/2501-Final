@@ -2,11 +2,11 @@
 #include <string>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "particles.h"
+#include "sparkle_particles.h"
 
 namespace game {
 
-Particles::Particles(void) : Geometry()
+SparkleParticles::SparkleParticles(void) : Geometry()
 {
     // Initialize variables with default values
     vbo_ = 0;
@@ -15,7 +15,7 @@ Particles::Particles(void) : Geometry()
 }
 
 
-void Particles::CreateGeometry(void)
+void SparkleParticles::CreateGeometry(void)
 {
 
     // Each particle is a square with four vertices and two triangles
@@ -41,13 +41,13 @@ void Particles::CreateGeometry(void)
     };
 
     // Initialize all the particle vertices
-    GLfloat particles[NUM_PARTICLES * vertex_attr];
+    GLfloat particles[NUM_SPARKLES * vertex_attr];
     float theta, r, tmod;
     float pi = glm::pi<float>();
     float two_pi = 2.0f*pi;
     float angle;
 
-    for (int i = 0; i < NUM_PARTICLES; i++){
+    for (int i = 0; i < NUM_SPARKLES; i++){
         // Check if we are initializing a new particle
         //
         // A particle has four vertices, so every four vertices we need
@@ -81,9 +81,9 @@ void Particles::CreateGeometry(void)
     }
 
     // Initialize all the particle faces
-    GLuint manyfaces[NUM_PARTICLES * 6];
+    GLuint manyfaces[NUM_SPARKLES * 6];
 
-    for (int i = 0; i < NUM_PARTICLES; i++) {
+    for (int i = 0; i < NUM_SPARKLES; i++) {
         for (int j = 0; j < 6; j++){
             manyfaces[i * 6 + j] = face[j] + i * 4;
         }
@@ -104,7 +104,7 @@ void Particles::CreateGeometry(void)
 }
 
 
-void Particles::SetGeometry(GLuint shader_program){
+void SparkleParticles::SetGeometry(GLuint shader_program){
 
     // Set blending
     glDisable(GL_DEPTH_TEST);

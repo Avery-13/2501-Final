@@ -1,27 +1,27 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "particle_system.h"
+#include "sparkle_particle_system.h"
 #include <iostream>
 
 
 namespace game {
 
-ParticleSystem::ParticleSystem(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, GameObject *parent)
+    SparkleParticleSystem::SparkleParticleSystem(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, GameObject *parent)
 	: GameObject(position, geom, shader, texture){
 
     parent_ = parent;
 }
 
 
-void ParticleSystem::Update(double delta_time) {
+void SparkleParticleSystem::Update(double delta_time) {
 
     // Call the parent's update method to move the object in standard way, if desired
     GameObject::Update(delta_time);
 }
 
 
-void ParticleSystem::Render(glm::mat4 view_matrix, double current_time){
+void SparkleParticleSystem::Render(glm::mat4 view_matrix, double current_time){
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);

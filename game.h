@@ -16,6 +16,8 @@
 #include "player_game_object.h"
 #include "bullet_game_object.h"
 #include "collectible_game_object.h"
+#include "disc_collectible_game_object.h"
+#include "potion_collectible_game_object.h"
 #include "particle_system.h"
 
 namespace game {
@@ -98,8 +100,14 @@ namespace game {
             // list for bullets
             std::vector<BulletGameObject*> bullets_;
 
-            // List of collectible objects
+            // List of bone collectible objects
             std::vector<CollectibleGameObject*> collectibles_;
+
+            // List of disc collectible objects
+            std::vector<DiscCollectibleGameObject*> discs_;
+
+            // list of potions
+            std::vector<PotionCollectibleGameObject*> potions_;
 
             // Explosion object
             GameObject* explosion_;

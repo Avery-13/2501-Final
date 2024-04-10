@@ -1,15 +1,15 @@
-#ifndef PARTICLE_SYSTEM_H_
-#define PARTICLE_SYSTEM_H_
+#ifndef SPARKLE_PARTICLE_SYSTEM_H_
+#define SPARKLE_PARTICLE_SYSTEM_H_
 
 #include "game_object.h"
 
 namespace game {
 
     // Inherits from GameObject
-    class ParticleSystem : public GameObject {
+    class SparkleParticleSystem : public GameObject {
 
         public:
-            ParticleSystem(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, GameObject *parent);
+            SparkleParticleSystem(const glm::vec3 &position, Geometry *geom, Shader *shader, GLuint texture, GameObject *parent);
 
             void Update(double delta_time) override;
 
@@ -18,8 +18,8 @@ namespace game {
         private:
             GameObject *parent_;
 
-    }; // class ParticleSystem
+    }; // class SparkleParticleSystem
 
 } // namespace game
 
-#endif // PARTICLE_SYSTEM_H_
+#endif // SPARKLE_PARTICLE_SYSTEM_H_

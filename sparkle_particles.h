@@ -1,17 +1,17 @@
-#ifndef PARTICLES_H_
-#define PARTICLES_H_
+#ifndef SPARKLE_PARTICLES_H_
+#define SPARKLE_PARTICLES_H_
 
 #include "geometry.h"
 
-#define NUM_PARTICLES 100
+#define NUM_SPARKLES 20
 
 namespace game {
 
     // A set of particles that can be rendered
-    class Particles : public Geometry {
+    class SparkleParticles : public Geometry {
 
         public:
-            Particles(void);
+            SparkleParticles(void);
 
             // Create the geometry (called once)
             void CreateGeometry(void);
@@ -19,7 +19,7 @@ namespace game {
             // Use the geometry
             void SetGeometry(GLuint shader_program);
 
-    }; // class Particles
+    }; // class SparkleParticles
 } // namespace game
 
-#endif // PARTICLES_H_
+#endif // SPARKLE_PARTICLES_H_
