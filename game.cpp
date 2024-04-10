@@ -157,6 +157,7 @@ void Game::Setup(void)
     // Setup enemy objects
     game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[3]));
     game_objects_[1]->SetRotation(pi_over_two);
+    game_objects_[1]->SetDisabled(true);
 
     game_objects_.push_back(new OrbitEnemy(this, glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[11], game_objects_[1]));
     game_objects_[2]->SetRotation(pi_over_two);
