@@ -3,11 +3,12 @@
 namespace game {
 
     ProjectileShootingEnemy::ProjectileShootingEnemy(
-        glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture)
+        Game* game, glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture)
         : EnemyGameObject(position, geom, shader, texture),
-        shootCooldownTime_(2.0f), // Example: 2 seconds cooldown
+        shootCooldownTime_(2.0f), //2 seconds cooldown
         timeSinceLastShot_(0.0f) {
-    
+        
+        game_ = game;
         speed = 1.0f;
         followTime = 1.0f;
     }
@@ -20,18 +21,20 @@ namespace game {
         timeSinceLastShot_ += delta_time;
 
         // Check if it's time to shoot
-        if (timeSinceLastShot_ >= shootCooldownTime_) {
-            ShootProjectile();
-            timeSinceLastShot_ = 0.0f; // Reset the cooldown
+        if (state_==INTERCEPTING_) {
+            if (timeSinceLastShot_ >= shootCooldownTime_) {
+                ShootProjectile();
+                timeSinceLastShot_ = 0.0f; // Reset the cooldown
+            }
         }
+
     }
 
     void ProjectileShootingEnemy::ShootProjectile() {
-        // Implement the logic to shoot a projectile
-        // This could involve creating a new BulletGameObject and adding it to the game
-        // Example:
-        // glm::vec3 bulletDirection = glm::normalize(playerPosition - position_);
-        // game->SpawnBullet(position_, bulletDirection, bulletRotation);
+        glm::vec3 direction = glm::normalize(player_pos_ - this->GetPosition());
+        glm::vec3 bulletStartPosition = this->GetPosition() + direction;
+
+        game_->SpawnBullet(bulletStartPosition, direction);
     }
 
 } // namespace game

@@ -142,7 +142,7 @@ void Game::Setup(void)
 
 
     // Setup enemy objects
-    game_objects_.push_back(new ProjectileShootingEnemy(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[11]));
+    game_objects_.push_back(new ProjectileShootingEnemy(this, glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[11]));
     game_objects_[1]->SetRotation(pi_over_two);
 
 
@@ -652,6 +652,10 @@ void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction) {
         lastShotTime_ = currentTime;
     }
 
+}
+
+void Game::AddBullet(BulletGameObject* bullet) {
+    bullets_.push_back(bullet);
 }
 
 glm::vec3 Game::CalculateDirectionVector(float angleRadians) {
