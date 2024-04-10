@@ -22,7 +22,7 @@ namespace game {
 		t += delta_time;
 
 		// Motion in PATROLLING_ state
-		if(state_ == PATROLLING_) {
+		if(state_ == PATROLLING_ && !IsDisabled()) {
 			//std::cout<< "Patrolling" << std::endl;
 			float x = start_pos_.x + radius * cos(t);
 			float y = start_pos_.y + radius * sin(t);
@@ -32,7 +32,7 @@ namespace game {
 
 			GameObject::SetPosition(glm::vec3(x, y, 0.0f));
 		}
-		if (state_ == INTERCEPTING_) {
+		if (state_ == INTERCEPTING_ && !IsDisabled()) {
 			//std::cout<< "Intercepting" << std::endl;
 			//std::cout<<update_timer_.Finished()<<std::endl;
 			if (!update_timer_.Running()) {

@@ -17,6 +17,7 @@
 #include "game.h"
 #include "timer.h"
 #include "projectile_shooting_enemy.h"
+#include "orbit_enemy.h"
 
 namespace game {
 
@@ -142,8 +143,13 @@ void Game::Setup(void)
 
 
     // Setup enemy objects
-    game_objects_.push_back(new ProjectileShootingEnemy(this, glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[11]));
+    game_objects_.push_back(new EnemyGameObject(glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[8]));
     game_objects_[1]->SetRotation(pi_over_two);
+
+    game_objects_.push_back(new OrbitEnemy(this, glm::vec3(-5.0f, 1.0f, 0.0f), sprite_, &sprite_shader_, tex_[11], game_objects_[1]));
+    game_objects_[2]->SetRotation(pi_over_two);
+
+
 
 
     // Setup collectible objects

@@ -23,6 +23,7 @@ set(HDRS
     particles.h
     particle_system.h
     projectile_shooting_enemy.h
+    orbit_enemy.h
 )
  
 set(SRCS
@@ -50,6 +51,7 @@ set(SRCS
     particles.cpp
     particle_system.cpp
     projectile_shooting_enemy.cpp
+    orbit_enemy.cpp
 )
 
 # Add path name to configuration file
