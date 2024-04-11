@@ -145,7 +145,7 @@ namespace game {
             const float shotCooldown_ = 1.0f; // Cooldown period in seconds
 
             float lastBombTime_;
-            const float bombCooldown_ = 1.5f; // Cooldown period in seconds
+            const float bombCooldown_ = 3.5f; // Cooldown period in seconds
 
             // Current amount of collected objects
             int collected_objects_;

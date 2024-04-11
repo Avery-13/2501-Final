@@ -311,6 +311,5 @@ namespace game {
 
     }
 
-    // Rest of your HUD class methods...
 
 } // namespace game

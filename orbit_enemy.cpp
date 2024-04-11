@@ -2,11 +2,12 @@
 #define GLM_FORCE_RADIANS
 #define GLEW_STATIC
 #include <glm/gtc/matrix_transform.hpp> 
+#include <iostream>
 
 namespace game {
 
     OrbitEnemy::OrbitEnemy(
-        Game* game, glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture, GameObject* orbitObject)
+        Game* game, glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture, EnemyGameObject* orbitObject)
         : EnemyGameObject(position, geom, shader, texture),
         orbitObject_(orbitObject),
         orbitRadius_(1.5f), // Set the initial orbit radius
@@ -16,7 +17,7 @@ namespace game {
     {
         game_ = game;
         orbitObjectRotationSpeed_ = 3.0f * glm::pi<float>();
-        // You might want to initialize the orbiting object's position here
+        speed = 2.5f;
     }
 
     void OrbitEnemy::Update(double delta_time) {
@@ -25,9 +26,16 @@ namespace game {
 
         // Update the orbiting object
         UpdateOrbit(delta_time);
+
     }
 
     void OrbitEnemy::UpdateOrbit(float delta_time) {
+
+        if (!orbitObject_->isOrbititnObject) {
+            std::cout << "Orbit object has been destroyed." << std::endl;
+            state_ = INTERCEPTING_;
+        }
+
         // Update the angle based on the orbit speed
         orbitAngle_ += orbitSpeed_ * delta_time;
 

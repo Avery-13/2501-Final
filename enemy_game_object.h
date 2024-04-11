@@ -25,6 +25,8 @@ namespace game {
         glm::vec3 velocity;
         glm::vec3 player_pos_;
         glm::vec3 start_pos_;
+        double wander_cool_down_;
+        bool isOrbititnObject = false;
 
         Timer update_timer_;
 

@@ -591,11 +591,12 @@ void Game::Update(double delta_time)
 
             PlayerGameObject* player = dynamic_cast<PlayerGameObject*>(current_game_object);
             EnemyGameObject* enemy = dynamic_cast<EnemyGameObject*>(other_game_object);
+            OrbitEnemy* orbitEnemy = dynamic_cast<OrbitEnemy*>(other_game_object);
 
 
             if (player && enemy) {
                 enemy->updatePlayerPos(player->GetPosition());
-                if (distance < 2.0f) {
+                if (distance < 2.0f && !orbitEnemy) {
                     enemy->state_ = INTERCEPTING_;
                 }
             }
@@ -643,6 +644,7 @@ void Game::Update(double delta_time)
                     score += 100;
                     std::cout<< "Explosion Started" << std::endl;
                     explosions_.push_back(new ExplosionGameObject(other_game_object->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
+                    enemy->isOrbititnObject = false;
                     game_objects_.erase(game_objects_.begin() + j);
 				}
 
@@ -653,6 +655,7 @@ void Game::Update(double delta_time)
             }
         }
 
+        bool breakloop = false;
         // Check for collision with bullets
         for (int j = 0; j < (bullets_.size()); j++) {
             BulletGameObject* bullet = bullets_[j];
@@ -677,7 +680,9 @@ void Game::Update(double delta_time)
                     score += 100;
                     std::cout << "Explosion Started" << std::endl;
                     explosions_.push_back(new ExplosionGameObject(enemy->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
+                    enemy->isOrbititnObject = false;
                     game_objects_.erase(game_objects_.begin() + i);
+
 
                 }
             //if its enemy bullet colliding with player
@@ -704,6 +709,7 @@ void Game::Update(double delta_time)
             }
 
         }
+
 
         // Check for collision with bone collectibles
         for (int j = 0; j < collectibles_.size(); j++) {
@@ -876,18 +882,20 @@ void Game::Render(void){
 
 
 }
-
+//spawns bullet
 void Game::SpawnBullet(glm::vec3 position, glm::vec3 direction, GLuint texture, float speed, bool isFriendlyProjectile) {
 
     double currentTime = glfwGetTime();
     position.z = 0.0f;
 
+    //if can shoot
     if (currentTime - lastShotTime_ >= shotCooldown_) {
         GLuint bulletTexture = texture; 
         float bulletSpeed = speed;
         BulletGameObject * bullet = new BulletGameObject(position, sprite_, &sprite_shader_, bulletTexture, direction, bulletSpeed, isFriendlyProjectile);
         bullets_.push_back(bullet);
         if (isFriendlyProjectile) { lastShotTime_ = currentTime; }
+        //make enemy bullets smaller
         if (!isFriendlyProjectile) { bullets_.back()->SetScale(glm::vec2(0.4f, 0.4f)); }
         
     }
@@ -898,6 +906,7 @@ void Game::SpawnOrbitEnemy(const glm::vec3& location) {
     // Create a standard EnemyGameObject that will orbit around the OrbitEnemy
     EnemyGameObject* orbitingObject = new EnemyGameObject(location, sprite_, &sprite_shader_, tex_[18]);
     orbitingObject->SetDisabled(true); // Disable its independent behavior
+    orbitingObject->isOrbititnObject = true;
     orbitingObject->SetRotation(pi_over_two);
 
     // Add the orbiting object to the game's collection of game objects
@@ -936,7 +945,7 @@ void Game::HandleBombExplosions() {
                     // Enemy is within blast radius, destroy it
                     explosions_.push_back(new ExplosionGameObject(curr_enemy->GetPosition(), sprite_, &sprite_shader_, tex_[6]));
                     score += 100;
-                    delete curr_enemy;
+                    curr_enemy->isOrbititnObject = false;
                     game_objects_.erase(game_objects_.begin() + j);
                 }
                 else {

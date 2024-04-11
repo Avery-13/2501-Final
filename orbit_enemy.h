@@ -9,12 +9,12 @@ namespace game {
     class OrbitEnemy : public EnemyGameObject {
     public:
         OrbitEnemy(
-            Game* game, glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture, GameObject* orbitObject);
+            Game* game, glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture, EnemyGameObject* orbitObject);
 
         void Update(double delta_time) override;
 
     private:
-        GameObject* orbitObject_; // The object that will orbit the enemy
+        EnemyGameObject* orbitObject_; // The object that will orbit the enemy
         float orbitRadius_; // The radius of the orbit
         float orbitSpeed_; // The speed at which the object orbits
         float orbitAngle_; // Current angle of the orbiting object

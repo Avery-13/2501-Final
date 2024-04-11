@@ -1,5 +1,6 @@
 #include "enemy_game_object.h"
 #include <iostream>
+#include <glm/gtc/matrix_transform.hpp> 
 
 namespace game {
 
@@ -14,6 +15,16 @@ namespace game {
 		start_pos_ = position;
 		Timer update_timer_;
 		state_ = PATROLLING_;
+		wander_cool_down_ = 0.0;
+		velocity = glm::vec3(0.0, 1.0, 0.0);
+		speed = 2.2f;
+	}
+
+	// Generic mapping function
+// Map a number "input" in the range [a, b] to the range [c, d]
+	float map(float input, float a, float b, float c, float d) {
+
+		return c + (d - c) * (input - a) / (b - a);
 	}
 
 	void EnemyGameObject::Update(double delta_time) {
@@ -37,26 +48,33 @@ namespace game {
 			// Set the enemy's rotation to face in the direction of the tangent
 			GameObject::SetRotation(tangentAngle);
 			GameObject::SetPosition(glm::vec3(x, y, 0.0f));
+
 		}
 		if (state_ == INTERCEPTING_ && !IsDisabled()) {
-			//std::cout<< "Intercepting" << std::endl;
-			//std::cout<<update_timer_.Finished()<<std::endl;
-			if (!update_timer_.Running()) {
-				//std::cout << "intercepting timer started" << std::endl;
-				velocity = glm::normalize(player_pos_ - GameObject::GetPosition());
-				velocity *= speed;
-				GameObject::SetRotation(atan2(velocity.y, velocity.x));
-				update_timer_.Start(followTime);
-			}
-			else if (update_timer_.Finished()) {
-				velocity = glm::normalize(player_pos_ - GameObject::GetPosition());
-				velocity *= speed;
-				GameObject::SetRotation(atan2(velocity.y, velocity.x));
-				update_timer_.Start(followTime);
+			// Chase steering behavior
+
+			// Compute steering force (acceleration)
+			glm::vec3 desired = player_pos_ - position_;
+			glm::vec3 acc = desired * speed - velocity;
+			glm::vec3 direction = glm::normalize(acc);
+			float rotationAngle = atan2(direction.y, direction.x);
+
+			// Add steering to velocity
+			velocity += acc * ((float)delta_time);
+
+			velocity = speed * glm::normalize(velocity);
+
+			// Perform arrival
+			float r = 0.5; // Distance threshold when arrival kicks in
+			float d = glm::length(player_pos_ - position_);
+			if (d < r) {
+				float z = map(d, 0, r, 0, speed);
+				velocity = z * glm::normalize(velocity);
 			}
 
-			//std::cout << "Velocity: " << velocity.x << " " << velocity.y << " " << velocity.z << std::endl;
-			GameObject::SetPosition(GameObject::GetPosition() + velocity * (float)delta_time);
+			position_ += velocity* ((float)delta_time);
+
+			SetRotation(rotationAngle);
 		}
 	}
 
