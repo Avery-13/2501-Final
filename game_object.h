@@ -96,7 +96,7 @@ namespace game {
             // Object's time variable
             float t = 0.0f;
 
-            bool disabled_ = false;
+            bool disabled_ = false; // disables movement
 
             bool marked_for_deletion_ = false;
 

@@ -20,7 +20,7 @@ namespace game {
         float orbitAngle_; // Current angle of the orbiting object
         float orbitObjectRotationSpeed_;
 
-        Game* game_;
+        Game* game_; // reference to game
 
         void UpdateOrbit(float delta_time);
     };

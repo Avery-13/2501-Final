@@ -13,14 +13,15 @@ namespace game {
             Game* game, glm::vec3 position, Geometry* geom, Shader* shader, GLuint texture);
 
         void Update(double delta_time) override;
-        void ShootProjectile();
+        void ShootProjectile(); // shots projectile 
 
     private:
-        float shootCooldownTime_;
+        float shootCooldownTime_; // cooldown time
         float timeSinceLastShot_;
-        Game* game_;
-        GLuint bulletTex;
+        Game* game_; // game reference
+        GLuint bulletTex; // bullet texture
 
+        //load teture
         void LoadTexture(GLuint& texture, const char* filepath);
     };
 

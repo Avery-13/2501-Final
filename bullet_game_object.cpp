@@ -36,10 +36,6 @@ namespace game {
         }
 
         GameObject::Update(delta_time);
-
-
-        // Call the parent's update method if it does anything additional
-        GameObject::Update(delta_time);
     }
 
     void BulletGameObject::Render(glm::mat4 view_matrix, double current_time) {

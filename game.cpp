@@ -387,6 +387,7 @@ void Game::HandleControls(double delta_time)
     if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
 
         double currentTime = glfwGetTime();
+        //if can shoot
         if (currentTime - lastBombTime_ >= bombCooldown_) {
             DropBombAtLocation(player->GetPosition());
             lastBombTime_ = currentTime;
@@ -428,7 +429,7 @@ void Game::Update(double delta_time)
     // Update time
     current_time_ += delta_time;
     if (!enemy_timer_.Running()) {
-        enemy_timer_.Start(3.0f);
+        enemy_timer_.Start(2.0f);
     }
 
     if (enemy_timer_.Finished()) {
@@ -446,8 +447,8 @@ void Game::Update(double delta_time)
             game_objects_.push_back(new ProjectileShootingEnemy(this, glm::vec3(rand_x, rand_y, 0.0f), sprite_, &sprite_shader_, tex_[12]));
         }
 
+        //alternates between what type of enemy spawns
         alternateEnemy = !alternateEnemy;
-
 	}
 
     if (!collectible_timer_.Running()) {
@@ -800,6 +801,7 @@ void Game::Update(double delta_time)
         }
        
     }
+
 }
 
 
@@ -980,7 +982,6 @@ float Game::GetRotationAngleFromDirection(glm::vec3 direction) {
     glm::vec3 normalizedDirection = glm::normalize(direction);
 
     // Calculate the angle in radians from the normalized direction vector
-    // atan2 returns the angle between the positive x-axis and the point (y, x)
     float angleRadians = atan2(normalizedDirection.y, normalizedDirection.x);
 
     return angleRadians;

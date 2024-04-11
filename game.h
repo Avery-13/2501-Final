@@ -44,14 +44,19 @@ namespace game {
             // Run the game (keep the game active)
             void MainLoop(void); 
 
+            //math function
             glm::vec3 CalculateDirectionVector(float angleRadians);
 
+            //math function
             float GetRotationAngleFromDirection(glm::vec3 direction);
 
+            //spawn bullet with given inputs
             void SpawnBullet(glm::vec3 position, glm::vec3 direction, GLuint texture, float speed, bool isFriendlyProjectile);
 
+            //add bullet to vector
             void AddBullet(BulletGameObject* bullet);
 
+            //spawn orbit enemy at given location
             void SpawnOrbitEnemy(const glm::vec3& location);
 
         private:
@@ -168,8 +173,10 @@ namespace game {
             // Render the game world
             void Render(void);
 
+            //drops bomb at location
             void DropBombAtLocation(const glm::vec3& location);
 
+            //handles updates for the bombs
             void HandleBombExplosions();
 
 

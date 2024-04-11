@@ -58,7 +58,7 @@ namespace game {
         GLuint emptyBoneTexture;
         GLuint discTexture;
 
-
+        //loads textures
         void LoadTexture(GLuint& texture, const char* filepath);
 
     };

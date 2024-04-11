@@ -35,3 +35,9 @@ Collectibles:
 Bones - Collect 3 to activate 10 second invincibility
 Health Potions - If down in hearts, a health potion will restore one heart. If already at max health, potion will collect but do nothing.
 Frisbee Discs - The main game goal. There are 3 scattered randomly around the park, collect all 3 to win
+
+
+other checklist criteria:
+particle systmes - grass particles underneath the player, and star particles on the frisbee disc's
+UI - hud shows: score, time, current health, bones collected out of 3 for invulnerability power up, goal items collected (frisbee), current coordinates
+Advanced Method: steering behaviour on enemies, all enemies use chase steering at different speeds

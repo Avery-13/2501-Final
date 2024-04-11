@@ -32,7 +32,6 @@ namespace game {
     void OrbitEnemy::UpdateOrbit(float delta_time) {
 
         if (!orbitObject_->isOrbititnObject) {
-            std::cout << "Orbit object has been destroyed." << std::endl;
             state_ = INTERCEPTING_;
         }
 

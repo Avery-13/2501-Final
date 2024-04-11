@@ -39,7 +39,7 @@ void PlayerGameObject::Update(double delta_time) {
 	//Movement
 	SetPosition(GetPosition() + float(delta_time) * velocity_ * curr_speed_);
 
-	// Special player updates go here
+	// check invincibility timer
 	if (isInvincible_) {
 		if (invincibilityTimer_.Finished()) {
 			isInvincible_ = false;
@@ -47,6 +47,7 @@ void PlayerGameObject::Update(double delta_time) {
 		}
 	}
 
+	//set to invicible and reset bones
 	if (objectsCollected_ >= 3) {
 		isInvincible_ = true;
 		std::cout<< "Invincible!" << std::endl;

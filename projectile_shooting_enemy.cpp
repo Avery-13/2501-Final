@@ -37,6 +37,7 @@ namespace game {
 
     }
 
+    //spawn projectile based on position
     void ProjectileShootingEnemy::ShootProjectile() {
         glm::vec3 direction = glm::normalize(player_pos_ - this->GetPosition());
         glm::vec3 bulletStartPosition = this->GetPosition() + direction;
@@ -44,6 +45,7 @@ namespace game {
         game_->SpawnBullet(bulletStartPosition, this->GetBearing(), bulletTex, 3.0f, false);
     }
 
+    //load texture function taken from hud class
     void ProjectileShootingEnemy::LoadTexture(GLuint& texture, const char* filepath) {
 
         glGenTextures(1, &texture);
