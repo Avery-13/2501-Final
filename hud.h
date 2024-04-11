@@ -16,7 +16,7 @@ namespace game {
         HUD(const std::string& hudTexturePath, Shader* shader, const glm::mat4& projectionMatrix, Shader* heart_shader);
         ~HUD();
 
-        void Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates, int numDiscs);
+        void Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates, int numDiscs, double deltaTime);
         void Render(glm::mat4 hudProjection, double currentTime);
 
     private:
@@ -26,14 +26,15 @@ namespace game {
         std::vector<GameObject*> scoreDigits_; // HUD elements for the score digits
         std::vector<GameObject*> hearts; // HUD elements for the hearts
         std::vector<GameObject*> bones; // HUD elements for the bones
-        GameObject* discScore_; // HUD element for the num of discs collected
-        GameObject* disc_; // HUD element for the disc symbol
-
         std::vector<GameObject*> coordinateDigits_; // HUD elements for the coordinates
+        std::vector<GameObject*> gameTimeDigits_; // Three digits for the game time display
+
         GameObject* xSymbol_; // HUD element for the "x" symbol
         GameObject* ySymbol_; // HUD element for the "y" symbol
         GameObject* xMinusSymbol_; // HUD element for the "-" symbol for the x coordinate
         GameObject* yMinusSymbol_; // HUD element for the "-" symbol for the y coordinate
+        GameObject* discScore_; // HUD element for the num of discs collected
+        GameObject* disc_; // HUD element for the disc symbol
 
         Timer invincibilityTimer_; // Timer for invincibility duration
         std::vector<GameObject*> invincibilityTimerDigits_; // HUD elements for the timer digits
@@ -42,6 +43,8 @@ namespace game {
         int score_;
         int health_;
         int collectibles_;
+        double gameTime_;  // Elapsed game time in seconds
+
         glm::vec2 coordinates_;
 
         Geometry* sprite_;

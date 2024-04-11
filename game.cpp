@@ -154,8 +154,6 @@ void Game::Setup(void)
 
 
     // Setup enemy objects
-    SpawnOrbitEnemy(glm::vec3(-5.0f, 1.0f, 0.0f));
-
 
     // Setup collectible objects
     
@@ -314,7 +312,7 @@ void Game::MainLoop(void)
         Update(delta_time);
 
         // Update the HUD with new information
-        hud_->Update(score, player_->hp_, player_->objectsCollected_, player_->isInvincible_, player_->invincibilityTimer_.TimeLeft(), glm::vec2(player_->GetPosition().x, player_->GetPosition().y), player_->goalObjectsCollected_);
+        hud_->Update(score, player_->hp_, player_->objectsCollected_, player_->isInvincible_, player_->invincibilityTimer_.TimeLeft(), glm::vec2(player_->GetPosition().x, player_->GetPosition().y), player_->goalObjectsCollected_, delta_time);
 
 
         // Render all the game objects

@@ -93,7 +93,7 @@ namespace game {
         }
 
         // Initialize the coordinate digits
-        glm::vec3 coordinatesPosition(2.6f, 2.4f, 0.0f); // Adjust position as needed
+        glm::vec3 coordinatesPosition(2.6f, 1.8f, 0.0f); // Adjust position as needed
 
         // Init x symbol
         GameObject* xGo = new GameObject(coordinatesPosition, sprite_, shader_, symbolTextures[0]);
@@ -114,7 +114,7 @@ namespace game {
 		}
 
         // Reset coordinates position
-        coordinatesPosition = glm::vec3(2.6f, 2.0f, 0.0f); // Match previous x coordinate position, lower y
+        coordinatesPosition = glm::vec3(2.6f, 1.4f, 0.0f); // Match previous x coordinate position, lower y
 
         // Init y symbol
         GameObject* yGo = new GameObject(coordinatesPosition, sprite_, shader_, symbolTextures[1]);
@@ -135,6 +135,16 @@ namespace game {
         }
 
         std::cout << "Coord Digits size: " << coordinateDigits_.size() << std::endl;
+
+        gameTime_ = 0.0f;  // Initialize elapsed game time
+        // Initialize the game time digits GameObjects 
+        glm::vec3 gameTimeDigitPosition(2.8f, 2.4f, 0.0f); // Adjust position as needed
+        for (int i = 0; i < 3; ++i) {
+            GameObject* timeDigit = new GameObject(gameTimeDigitPosition, sprite_, shader_, numberTextures[0]);
+            timeDigit->SetScale(glm::vec2(0.5f, 0.5f));  // Adjust scale as needed
+            gameTimeDigits_.push_back(timeDigit);
+            gameTimeDigitPosition.x += 0.3f;  // Adjust for your HUD layout
+        }
     }
 
     HUD::~HUD() {
@@ -152,6 +162,9 @@ namespace game {
         }
         for (auto element : invincibilityTimerDigits_) {
             delete element;
+        }
+        for (auto& digit : gameTimeDigits_) {
+            delete digit;
         }
         delete sprite_;
         
@@ -202,6 +215,10 @@ namespace game {
         for (auto element : coordinateDigits_) {
 			element->Render(viewMatrix, currentTime);
 		}
+        for (auto element : gameTimeDigits_) {
+            element->Render(viewMatrix, currentTime);
+        }
+
         xSymbol_->Render(viewMatrix, currentTime);
         ySymbol_->Render(viewMatrix, currentTime);
 
@@ -225,11 +242,12 @@ namespace game {
         }
     }
 
-    void HUD::Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates, int numDiscs) {
+    void HUD::Update(int score, int health, int collectibles, bool isInvincible, float invincibilityTimeLeft, glm::vec2 coordinates, int numDiscs, double deltaTime) {
         score_ = score;
         health_ = health;
         collectibles_ = collectibles;
         coordinates_ = coordinates;
+        gameTime_ += deltaTime;
 
         std::string scoreStr = std::to_string(score);
         // Ensure the score string has exactly 4 characters, padding with zeros if necessary
@@ -308,6 +326,16 @@ namespace game {
             // Stop the timer when invincibility ends
             invincibilityTimer_.Stop();
         }
+
+        // Convert elapsed time to minutes and seconds
+        int seconds = static_cast<int>(gameTime_) % 60;
+        int minutes = static_cast<int>(gameTime_) / 60 % 60;  // If you want minutes
+        int hours = static_cast<int>(gameTime_) / 3600;  // If you want hours
+
+        // Update the textures for each game time digit (assuming you want to display only seconds)
+        gameTimeDigits_[0]->SetTexture(numberTextures[seconds / 100]);  // Hundreds place (if needed)
+        gameTimeDigits_[1]->SetTexture(numberTextures[seconds % 100 / 10]);  // Tens place
+        gameTimeDigits_[2]->SetTexture(numberTextures[seconds % 10]);  // Ones place
 
     }
 

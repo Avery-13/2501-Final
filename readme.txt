@@ -27,7 +27,7 @@ Poop Grenade - press Right-click to Drop a deadly turd in your wake that explode
 
 Enemies:
 Red Squirrel - is slower then the rest, but makes up for it by throwing accorns at you
-Black Squirrel - doesnt care how close you get, watch out for his orbiting leaf blade though, if you destroy his leaf he gets very mad and very fast
+Black Squirrel - doesnt care how close you get, watch out for his orbiting leaf blade though, if you destroy his leaf he gets very mad and very fast. they are also only found guarding the frisbees
 Brown Squirrel - quicker than the red squirrel, will chase you down and try to bite you
 
 
